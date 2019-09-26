@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{2E553696-6E0A-4B43-9F3F-6A8395AC03DD}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3E0B1D24-D2E1-4C8D-8BED-D431B493172B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.JsonSchema", "src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj", "{A4C41E3F-0DDA-4C33-B4F2-441DE3D4ECF4}"

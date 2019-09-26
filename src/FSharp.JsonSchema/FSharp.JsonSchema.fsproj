@@ -1,16 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="..\..\paket-files\baronfel\Newtonsoft.Json.FSharp.Idiomatic\src\Newtonsoft.Json.FSharp.Idiomatic\Newtonsoft.Json.FSharp.Idiomatic.fs">
+      <Paket>True</Paket>
+      <Link>Newtonsoft.Json.FSharp.Idiomatic.fs</Link>
+    </Compile>
     <Compile Include="Generator.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.11" />
-  </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
