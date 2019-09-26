@@ -17,4 +17,8 @@
     <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj" />
+  </ItemGroup>
 </Project>
