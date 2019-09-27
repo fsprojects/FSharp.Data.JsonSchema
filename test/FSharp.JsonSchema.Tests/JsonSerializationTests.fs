@@ -4,7 +4,7 @@ open Newtonsoft.Json
 open Newtonsoft.Json.FSharp.Idiomatic
 open Expecto
 
-type Test =
+type TestDU =
     | Case
     | WithOneField of int
     | WithNamedFields of name:string * value:float
