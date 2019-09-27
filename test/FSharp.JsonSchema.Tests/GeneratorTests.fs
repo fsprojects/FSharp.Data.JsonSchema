@@ -11,6 +11,17 @@ type TestRecord =
     { FirstName : string
       LastName : string }
 
+type TestEnum =
+    | First = 0
+    | Second = 1
+    | Third = 2
+
+[<RequireQualifiedAccess>]
+type TestSingleDU =
+    | Single
+    | Double
+    | Triple
+
 type TestDU =
     | Case
     | WithOneField of int
@@ -19,6 +30,20 @@ type TestDU =
 [<Tests>]
 let tests =
     testList "generator" [
+        test "Enum generates proper schema" {
+            let generator : JSchemaGenerator = JSchemaGenerator.Create()
+            let expected = """{
+  "type": "string",
+  "enum": [
+    "First",
+    "Second",
+    "Third"
+  ]
+}"""
+            let actual = generator.Generate(typeof<TestEnum>).ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
         test "Class generates proper schema" {
             let generator : JSchemaGenerator = JSchemaGenerator.Create()
             let expected = """{
@@ -94,7 +119,9 @@ let tests =
     }
   ]
 }"""
-            let actual = generator.Generate(typeof<option<_>>).ToString()
+            let ty = typeof<option<_>>
+            let schema = generator.Generate(ty)
+            let actual = schema.ToString()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
@@ -111,14 +138,83 @@ let tests =
     }
   ]
 }"""
-            let actual = generator.Generate(typeof<option<int>>).ToString()
+            let ty = typeof<option<int>>
+            let schema = generator.Generate(ty)
+            let actual = schema.ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "TestSingleDU is a union type" {
+            let expected = true
+            let actual = FSharp.Reflection.FSharpType.IsUnion(typeof<TestSingleDU>)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "TestSingleDU generates proper schema" {
+            let generator : JSchemaGenerator = JSchemaGenerator.Create()
+            let expected = """{
+  "type": "string",
+  "enum": [
+    "Single",
+    "Double",
+    "Triple"
+  ]
+}"""
+            let ty = typeof<TestSingleDU>
+            let schema = generator.Generate(ty)
+            let actual = schema.ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "TestDU is a union type" {
+            let expected = true
+            let actual = FSharp.Reflection.FSharpType.IsUnion(typeof<TestDU>)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
         test "Multi-case DU generates proper schema" {
             let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
-            let expected = """{ }"""
-            let actual = generator.Generate(typeof<TestDU>).ToString()
+            let expected = """{
+  "type": "object",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "Item": {
+          "type": "integer"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    }
+  ]
+}"""
+            let ty = typeof<TestDU>
+            let schema = generator.Generate(ty)
+            let actual = schema.ToString()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
     ]

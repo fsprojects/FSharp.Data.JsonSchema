@@ -4,6 +4,17 @@ open Newtonsoft.Json
 open Newtonsoft.Json.FSharp.Idiomatic
 open Expecto
 
+type TestEnum =
+    | First = 0
+    | Second = 1
+    | Third = 2
+
+[<RequireQualifiedAccess>]
+type TestSingleDU =
+    | Single
+    | Double
+    | Triple
+
 type TestDU =
     | Case
     | WithOneField of int
@@ -11,7 +22,7 @@ type TestDU =
 
 let settings =
     JsonSerializerSettings(
-        Converters=[|OptionConverter(); MultiCaseDuConverter("tag")|],
+        Converters=[|Converters.StringEnumConverter(); OptionConverter(); SingleCaseDuConverter(); MultiCaseDuConverter("tag")|],
         ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
 
 [<Tests>]
@@ -29,21 +40,33 @@ let tests =
             Expect.equal actual expected "Expected serializer to use OptionConverter"
         }
 
-        test "Test.Case should serialize as {\"tag\":\"Case\"}" {
+        test "TestDU.Case should serialize as {\"tag\":\"Case\"}" {
             let expected = """{"tag":"Case"}"""
             let actual = JsonConvert.SerializeObject(Case, settings)
-            Expect.equal actual expected "Expected serializer to use OptionConverter"
+            Expect.equal actual expected "Expected serializer to use MultiCaseDuConverter"
         }
 
-        test "Test.WithOneField(1) should serialize as {\"tag\":\"WithOneField\",\"Item\":1}" {
+        test "TestDU.WithOneField(1) should serialize as {\"tag\":\"WithOneField\",\"Item\":1}" {
             let expected = """{"tag":"WithOneField","Item":1}"""
             let actual = JsonConvert.SerializeObject(WithOneField 1, settings)
-            Expect.equal actual expected "Expected serializer to use OptionConverter"
+            Expect.equal actual expected "Expected serializer to use MultiCaseDuConverter"
         }
 
-        test "Test.WithNamedFields(\"name\", 1.) should serialize as {\"tag\":\"WithOneField\",\"name\":\"name\",\"value\":1.0}" {
+        test "TestDU.WithNamedFields(\"name\", 1.) should serialize as {\"tag\":\"WithOneField\",\"name\":\"name\",\"value\":1.0}" {
             let expected = """{"tag":"WithNamedFields","name":"name","value":1.0}"""
             let actual = JsonConvert.SerializeObject(WithNamedFields("name", 1.), settings)
-            Expect.equal actual expected "Expected serializer to use OptionConverter"
+            Expect.equal actual expected "Expected serializer to use MultiCaseDuConverter"
+        }
+
+        test "TestEnum.First should serialize as First" {
+            let expected = "\"First\""
+            let actual = JsonConvert.SerializeObject(TestEnum.First, settings)
+            Expect.equal actual expected "Expected serializer to use StringEnumConverter"
+        }
+
+        test "TestEnum.First should serialize as Single" {
+            let expected = "\"Single\""
+            let actual = JsonConvert.SerializeObject(TestSingleDU.Single, settings)
+            Expect.equal actual expected "Expected serializer to use SingleCaseDuConverter"
         }
     ]
