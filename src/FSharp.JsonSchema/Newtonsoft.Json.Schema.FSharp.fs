@@ -10,8 +10,10 @@ open Newtonsoft.Json.Schema.Generation
 type OptionGenerationProvider() =
     inherit JSchemaGenerationProvider()
 
+    let optionTy = typedefof<option<_>>
+
     override __.GetSchema(context:JSchemaTypeGenerationContext) =
-        if context.ObjectType = typeof<option<_>> then
+        if context.ObjectType.IsGenericType && optionTy.Equals(context.ObjectType.GetGenericTypeDefinition()) then
             let cases = FSharpType.GetUnionCases(context.ObjectType)
             let schema = JSchema(Type=Nullable JSchemaType.Object)
             for case in cases do
