@@ -20,7 +20,7 @@ type TestDU =
 let tests =
     testList "generator" [
         test "Class generates proper schema" {
-            let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
+            let generator : JSchemaGenerator = JSchemaGenerator.Create()
             let expected = """{
   "type": "object",
   "properties": {
@@ -47,7 +47,7 @@ let tests =
         }
 
         test "Record generates proper schema" {
-            let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
+            let generator : JSchemaGenerator = JSchemaGenerator.Create()
             let expected = """{
   "type": "object",
   "additionalProperties": false,
@@ -71,6 +71,54 @@ let tests =
   ]
 }"""
             let actual = generator.Generate(typeof<TestRecord>).ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "option<'a> generates proper schema" {
+            let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
+            let expected = """{
+  "type": "object",
+  "anyOf": [
+    {
+      "type": "null"
+    },
+    {
+      "type": [
+        "string",
+        "number",
+        "integer",
+        "boolean",
+        "object",
+        "array"
+      ]
+    }
+  ]
+}"""
+            let actual = generator.Generate(typeof<option<_>>).ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "option<int> generates proper schema" {
+            let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
+            let expected = """{
+  "type": "object",
+  "anyOf": [
+    {
+      "type": "null"
+    },
+    {
+      "type": "integer"
+    }
+  ]
+}"""
+            let actual = generator.Generate(typeof<option<int>>).ToString()
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+        }
+
+        test "Multi-case DU generates proper schema" {
+            let generator : JSchemaGenerator = JSchemaGenerator.Create(casePropertyName="tag")
+            let expected = """{ }"""
+            let actual = generator.Generate(typeof<TestDU>).ToString()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
     ]
