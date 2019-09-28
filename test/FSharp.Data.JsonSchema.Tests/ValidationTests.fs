@@ -6,8 +6,8 @@ open Expecto
 
 [<Tests>]
 let tests =
-    testList "schema validation" [
-        test "Enum validates against schema" {
+    ptestList "schema validation" [
+        ptest "Enum validates against schema" {
             let generator = Generator.Create()
             let schema = generator(typeof<TestEnum>)
             let json = Json.Serialize(TestEnum.First, "tag")
@@ -15,7 +15,7 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
-        test "Class validates against schema" {
+        ptest "Class validates against schema" {
             let generator = Generator.Create()
             let schema = generator(typeof<TestClass>)
             let json = Json.Serialize(TestClass(FirstName="Ryan", LastName="Riley"), "tag")
@@ -23,7 +23,7 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
-        test "Record validates against schema" {
+        ptest "Record validates against schema" {
             let generator = Generator.Create()
             let schema = generator(typeof<TestRecord>)
             let json = Json.Serialize({FirstName="Ryan"; LastName="Riley"}, "tag")

@@ -78,21 +78,14 @@ let tests =
         test "option<'a> generates proper schema" {
             let generator = Generator.Create("tag")
             let expected = """{
-  "type": "object",
-  "anyOf": [
-    {
-      "type": "null"
-    },
-    {
-      "type": [
-        "string",
-        "number",
-        "integer",
-        "boolean",
-        "object",
-        "array"
-      ]
-    }
+  "type": [
+    "string",
+    "number",
+    "integer",
+    "boolean",
+    "object",
+    "array",
+    "null"
   ]
 }"""
             let ty = typeof<option<_>>
@@ -104,14 +97,9 @@ let tests =
         test "option<int> generates proper schema" {
             let generator = Generator.Create("tag")
             let expected = """{
-  "type": "object",
-  "anyOf": [
-    {
-      "type": "null"
-    },
-    {
-      "type": "integer"
-    }
+  "type": [
+    "integer",
+    "null"
   ]
 }"""
             let ty = typeof<option<int>>

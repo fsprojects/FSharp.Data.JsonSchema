@@ -20,16 +20,23 @@ type internal OptionGenerationProvider() =
 
     override __.GetSchema(context:JSchemaTypeGenerationContext) =
         let cases = FSharpType.GetUnionCases(context.ObjectType)
-        let schema = JSchema(Type=Nullable JSchemaType.Object)
-        for case in cases do
-            match case.Name with
-            | "None" ->
-                schema.AnyOf.Add(JSchema(Type=Nullable JSchemaType.Null))
-            | _ ->
-                let field = case.GetFields() |> Array.head
-                let propSchema = context.Generator.Generate(field.PropertyType)
-                schema.AnyOf.Add(propSchema)
-        schema
+        let schemaType =
+            [|for case in cases do
+                match case.Name with
+                | "None" ->
+                    yield JSchemaType.Null
+                | _ ->
+                    let field = case.GetFields() |> Array.head
+                    let propSchema = context.Generator.Generate(field.PropertyType)
+                    if propSchema.Type.HasValue then
+                        // Use the generator to produce a schema for the
+                        // contained type and use it's schema type.
+                        yield propSchema.Type.Value
+                    else
+                        // Use None to represent an unspecified type (e.g. generic or unit)
+                        yield JSchemaType.None|]
+            |> Array.reduce (|||)
+        JSchema(Type=Nullable schemaType)
 
 type internal SingleCaseDuGenerationProvider() =
     inherit JSchemaGenerationProvider()
