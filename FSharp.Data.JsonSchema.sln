@@ -10,11 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{2E5536
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3E0B1D24-D2E1-4C8D-8BED-D431B493172B}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.JsonSchema", "src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj", "{A4C41E3F-0DDA-4C33-B4F2-441DE3D4ECF4}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Data.JsonSchema", "src\FSharp.Data.JsonSchema\FSharp.Data.JsonSchema.fsproj", "{A4C41E3F-0DDA-4C33-B4F2-441DE3D4ECF4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E9389682-50AF-4D7B-9A9A-226059C6A2D8}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.JsonSchema.Tests", "test\FSharp.JsonSchema.Tests\FSharp.JsonSchema.Tests.fsproj", "{C1299CBA-C059-41F1-8F32-1235EA1F6753}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Data.JsonSchema.Tests", "test\FSharp.Data.JsonSchema.Tests\FSharp.Data.JsonSchema.Tests.fsproj", "{C1299CBA-C059-41F1-8F32-1235EA1F6753}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

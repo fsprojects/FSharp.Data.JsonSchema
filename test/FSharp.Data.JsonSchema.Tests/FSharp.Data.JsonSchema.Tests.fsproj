@@ -5,7 +5,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj" />
+    <ProjectReference Include="..\..\src\FSharp.Data.JsonSchema\FSharp.Data.JsonSchema.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestTypes.fs" />

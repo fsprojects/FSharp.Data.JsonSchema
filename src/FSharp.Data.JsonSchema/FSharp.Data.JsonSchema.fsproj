@@ -8,7 +8,8 @@
       <Paket>True</Paket>
       <Link>Newtonsoft.Json.FSharp.Idiomatic.fs</Link>
     </Compile>
-    <Compile Include="Newtonsoft.Json.Schema.FSharp.fs" />
+    <Compile Include="Serializer.fs" />
+    <Compile Include="JsonSchema.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

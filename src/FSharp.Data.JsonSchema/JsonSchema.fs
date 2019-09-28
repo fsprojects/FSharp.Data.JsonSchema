@@ -1,4 +1,4 @@
-﻿namespace Newtonsoft.Json.Schema.Generation
+﻿namespace FSharp.Data.JsonSchema
 
 open System
 open System.Collections.Generic
@@ -9,7 +9,7 @@ open Newtonsoft.Json.Serialization
 open Newtonsoft.Json.Schema
 open Newtonsoft.Json.Schema.Generation
 
-type OptionGenerationProvider() =
+type internal OptionGenerationProvider() =
     inherit JSchemaGenerationProvider()
 
     static let optionTy = typedefof<option<_>>
@@ -31,7 +31,7 @@ type OptionGenerationProvider() =
                 schema.AnyOf.Add(propSchema)
         schema
 
-type SingleCaseDuGenerationProvider() =
+type internal SingleCaseDuGenerationProvider() =
     inherit JSchemaGenerationProvider()
 
     override __.CanGenerateSchema(context:JSchemaTypeGenerationContext) =
@@ -45,7 +45,7 @@ type SingleCaseDuGenerationProvider() =
             schema.Enum.Add(JValue case.Name)
         schema
 
-type MultiCaseDuGenerationProvider(?casePropertyName) =
+type internal MultiCaseDuGenerationProvider(?casePropertyName) =
     inherit JSchemaGenerationProvider()
 
     let casePropertyName = defaultArg casePropertyName "kind"
@@ -69,17 +69,38 @@ type MultiCaseDuGenerationProvider(?casePropertyName) =
             schema.AnyOf.Add(propSchema)
         schema
 
-[<AutoOpen>]
-module Extensions =
+[<AbstractClass; Sealed>]
+type Generator private () =
 
-    type Newtonsoft.Json.Schema.Generation.JSchemaGenerator with
+    static member Create(?casePropertyName) =
+        let generator = JSchemaGenerator(ContractResolver=CamelCasePropertyNamesContractResolver())
 
-        static member Create(?casePropertyName) =
-            let generator = JSchemaGenerator(ContractResolver=CamelCasePropertyNamesContractResolver())
+        generator.GenerationProviders.Add(StringEnumGenerationProvider())
+        generator.GenerationProviders.Add(OptionGenerationProvider())
+        generator.GenerationProviders.Add(SingleCaseDuGenerationProvider())
+        generator.GenerationProviders.Add(MultiCaseDuGenerationProvider(?casePropertyName=casePropertyName))
 
-            generator.GenerationProviders.Add(StringEnumGenerationProvider())
-            generator.GenerationProviders.Add(OptionGenerationProvider())
-            generator.GenerationProviders.Add(SingleCaseDuGenerationProvider())
-            generator.GenerationProviders.Add(MultiCaseDuGenerationProvider(?casePropertyName=casePropertyName))
+        generator.Generate
 
-            generator
+module Validation =
+
+    let validate schema json =
+        let jtoken = FSharp.Data.Json.ParseJToken json
+        try
+            jtoken.Validate(schema)
+            Ok()
+        with
+        | :? JSchemaValidationException as e ->
+            Error e
+
+    type FSharp.Data.Json with
+
+        static member ParseWithValidation<'T>(json, schema) =
+            validate schema json
+            |> Result.map (fun _ ->
+                FSharp.Data.Json.Parse<'T> json)
+
+        static member yParseWithValidation<'T>(json, schema, casePropertyName) =
+            validate schema json
+            |> Result.map (fun _ ->
+                FSharp.Data.Json.Parse<'T>(json, casePropertyName))
