@@ -1,13 +1,7 @@
 module FSharp.JsonSchema.Tests.JsonSerializationTests
 
 open Newtonsoft.Json
-open Newtonsoft.Json.FSharp.Idiomatic
 open Expecto
-
-let settings =
-    JsonSerializerSettings(
-        Converters=[|Converters.StringEnumConverter(); OptionConverter(); SingleCaseDuConverter(); MultiCaseDuConverter("tag")|],
-        ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
 
 [<Tests>]
 let tests =

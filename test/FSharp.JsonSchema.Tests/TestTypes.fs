@@ -23,3 +23,16 @@ type TestDU =
     | Case
     | WithOneField of int
     | WithNamedFields of name:string * value:float
+
+[<AutoOpen>]
+module Common =
+    open Newtonsoft.Json
+    open Newtonsoft.Json.FSharp.Idiomatic
+
+    let settings =
+        JsonSerializerSettings(
+            Converters=[|Converters.StringEnumConverter()
+                         OptionConverter()
+                         SingleCaseDuConverter()
+                         MultiCaseDuConverter("tag")|],
+            ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())

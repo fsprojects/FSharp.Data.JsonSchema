@@ -5,7 +5,7 @@ open Expecto
 
 [<Tests>]
 let tests =
-    testList "generator" [
+    testList "schema generation" [
         test "Enum generates proper schema" {
             let generator : JSchemaGenerator = JSchemaGenerator.Create()
             let expected = """{
