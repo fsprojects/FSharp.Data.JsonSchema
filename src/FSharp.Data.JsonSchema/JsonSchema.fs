@@ -78,16 +78,37 @@ type internal MultiCaseDuGenerationProvider(?casePropertyName) =
 
 [<AbstractClass; Sealed>]
 type Generator private () =
+    static let cache = Collections.Concurrent.ConcurrentDictionary<string * Type, JSchema>()
 
-    static member Create(?casePropertyName) =
+    static member internal CreateInternal(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
         let generator = JSchemaGenerator(ContractResolver=CamelCasePropertyNamesContractResolver())
 
         generator.GenerationProviders.Add(StringEnumGenerationProvider())
         generator.GenerationProviders.Add(OptionGenerationProvider())
         generator.GenerationProviders.Add(SingleCaseDuGenerationProvider())
         generator.GenerationProviders.Add(MultiCaseDuGenerationProvider(?casePropertyName=casePropertyName))
+        generationProviders
+        |> Option.iter (fun providers ->
+            for provider in providers do
+                generator.GenerationProviders.Add(provider))
 
+        generator
+
+    /// Creates a generator using the specified casePropertyName and generationProviders.
+    static member Create(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
+        let generator =
+            Generator.CreateInternal(?casePropertyName=casePropertyName,
+                                     ?generationProviders=generationProviders)
         generator.Generate
+
+    /// Creates a memoized generator that stores generated schemas in a global cache by Type.
+    static member CreateMemoized(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
+        let casePropertyName = defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
+        let generator =
+            Generator.CreateInternal(casePropertyName=casePropertyName,
+                                     ?generationProviders=generationProviders)
+        fun ty ->
+            cache.GetOrAdd((casePropertyName, ty), generator.Generate(ty))
 
 module Validation =
 

@@ -6,6 +6,7 @@ open Newtonsoft.Json.FSharp.Idiomatic
 
 [<AbstractClass; Sealed>]
 type Json private () =
+
     static let defaultSettings =
         JsonSerializerSettings(
             Converters=[|Converters.StringEnumConverter()
@@ -14,17 +15,23 @@ type Json private () =
                          MultiCaseDuConverter()|],
             ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
 
+    static let settingsCache =
+        System.Collections.Concurrent.ConcurrentDictionary(dict[|Json.DefaultCasePropertyName, defaultSettings|])
+
+    static member internal DefaultCasePropertyName = "kind"
+
     static member Serialize(value) =
         JsonConvert.SerializeObject(value, defaultSettings)
 
     static member Serialize(value, casePropertyName) =
         let settings =
-            JsonSerializerSettings(
-                Converters=[|Converters.StringEnumConverter()
-                             OptionConverter()
-                             SingleCaseDuConverter()
-                             MultiCaseDuConverter(casePropertyName)|],
-                ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
+            settingsCache.GetOrAdd(casePropertyName,
+                JsonSerializerSettings(
+                    Converters=[|Converters.StringEnumConverter()
+                                 OptionConverter()
+                                 SingleCaseDuConverter()
+                                 MultiCaseDuConverter(casePropertyName)|],
+                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()))
         JsonConvert.SerializeObject(value, settings)
 
     static member Parse<'T>(json) =
@@ -32,12 +39,13 @@ type Json private () =
 
     static member Parse<'T>(json, casePropertyName) =
         let settings =
-            JsonSerializerSettings(
-                Converters=[|Converters.StringEnumConverter()
-                             OptionConverter()
-                             SingleCaseDuConverter()
-                             MultiCaseDuConverter(casePropertyName)|],
-                ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
+            settingsCache.GetOrAdd(casePropertyName, fun key ->
+                JsonSerializerSettings(
+                    Converters=[|Converters.StringEnumConverter()
+                                 OptionConverter()
+                                 SingleCaseDuConverter()
+                                 MultiCaseDuConverter(key)|],
+                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()))
         JsonConvert.DeserializeObject<'T>(json, settings)
 
     static member ParseJToken(json) =

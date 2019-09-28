@@ -5,9 +5,10 @@ open Expecto
 
 [<Tests>]
 let tests =
+    let generator = Generator.CreateMemoized("tag")
+
     testList "schema generation" [
         test "Enum generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": "string",
   "enum": [
@@ -21,7 +22,6 @@ let tests =
         }
 
         test "Class generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": "object",
   "properties": {
@@ -48,7 +48,6 @@ let tests =
         }
 
         test "Record generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": "object",
   "additionalProperties": false,
@@ -76,7 +75,6 @@ let tests =
         }
 
         test "option<'a> generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": [
     "string",
@@ -95,7 +93,6 @@ let tests =
         }
 
         test "option<int> generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": [
     "integer",
@@ -109,7 +106,6 @@ let tests =
         }
 
         test "TestSingleDU generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": "string",
   "enum": [
@@ -125,7 +121,6 @@ let tests =
         }
 
         test "Multi-case DU generates proper schema" {
-            let generator = Generator.Create("tag")
             let expected = """{
   "type": "object",
   "anyOf": [
