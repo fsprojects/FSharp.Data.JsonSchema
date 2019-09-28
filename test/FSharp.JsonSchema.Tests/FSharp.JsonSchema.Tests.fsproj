@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,12 +5,14 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="JsonSerializationTests.fs" />
-    <Compile Include="GeneratorTests.fs" />
-    <Compile Include="Main.fs" />
+    <ProjectReference Include="..\..\src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FSharp.JsonSchema\FSharp.JsonSchema.fsproj" />
+    <Compile Include="TestTypes.fs" />
+    <Compile Include="JsonSerializationTests.fs" />
+    <Compile Include="GeneratorTests.fs" />
+    <Compile Include="ValidationTests.fs" />
+    <Compile Include="Main.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

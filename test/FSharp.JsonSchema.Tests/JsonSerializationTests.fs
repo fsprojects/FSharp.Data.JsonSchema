@@ -1,24 +1,8 @@
-module JsonSerializationTests
+module FSharp.JsonSchema.Tests.JsonSerializationTests
 
 open Newtonsoft.Json
 open Newtonsoft.Json.FSharp.Idiomatic
 open Expecto
-
-type TestEnum =
-    | First = 0
-    | Second = 1
-    | Third = 2
-
-[<RequireQualifiedAccess>]
-type TestSingleDU =
-    | Single
-    | Double
-    | Triple
-
-type TestDU =
-    | Case
-    | WithOneField of int
-    | WithNamedFields of name:string * value:float
 
 let settings =
     JsonSerializerSettings(
