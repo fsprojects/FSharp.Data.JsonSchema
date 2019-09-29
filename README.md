@@ -1,4 +1,4 @@
-# FSharp.JsonSchema
+# FSharp.Data.JsonSchema
 
 The goal of this project is to provide generation of idiomatic [JSON Schema](https://json-schema.org/) definitions for F# types.
 
