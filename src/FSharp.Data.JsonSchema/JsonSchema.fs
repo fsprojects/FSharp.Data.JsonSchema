@@ -6,6 +6,41 @@ open Microsoft.FSharp.Reflection
 open Newtonsoft.Json.Linq
 open Newtonsoft.Json.FSharp.Idiomatic
 open Newtonsoft.Json.Serialization
+open NJsonSchema
+open NJsonSchema.Generation
+
+type internal OptionSchemaProcessor() =
+    static let optionTy = typedefof<option<_>>
+
+    member this.Process(context:SchemaProcessorContext) =
+        if context.Type.IsGenericType
+           && optionTy.Equals(context.Type.GetGenericTypeDefinition()) then
+            let schema = context.Schema
+            let cases = FSharpType.GetUnionCases(context.Type)
+            let schemaType =
+                [|for case in cases do
+                    match case.Name with
+                    | "None" ->
+                        yield JsonObjectType.Null
+                    | _ ->
+                        let field = case.GetFields() |> Array.head
+                        let schema = context.Generator.Generate(field.PropertyType)
+                        match schema.Type with
+                        | JsonObjectType.None ->
+                            yield JsonObjectType.String |||
+                                  JsonObjectType.Number |||
+                                  JsonObjectType.Integer |||
+                                  JsonObjectType.Boolean |||
+                                  JsonObjectType.Object |||
+                                  JsonObjectType.Array
+                        | ty -> yield ty|]
+                |> Array.reduce (|||)
+            schema.Type <- schemaType
+
+    interface ISchemaProcessor with
+        member this.Process(context) = this.Process(context)
+
+(*
 open Newtonsoft.Json.Schema
 open Newtonsoft.Json.Schema.Generation
 
@@ -75,51 +110,32 @@ type internal MultiCaseDuGenerationProvider(?casePropertyName) =
                 propSchema.Properties.Add(KeyValuePair(field.Name, fieldSchema))
             schema.AnyOf.Add(propSchema)
         schema
+*)
 
 [<AbstractClass; Sealed>]
 type Generator private () =
-    static let cache = Collections.Concurrent.ConcurrentDictionary<string * Type, JSchema>()
-
-    static member internal CreateInternal(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
-        let generator = JSchemaGenerator(ContractResolver=CamelCasePropertyNamesContractResolver())
-
-        generator.GenerationProviders.Add(StringEnumGenerationProvider())
-        generator.GenerationProviders.Add(OptionGenerationProvider())
-        generator.GenerationProviders.Add(SingleCaseDuGenerationProvider())
-        generator.GenerationProviders.Add(MultiCaseDuGenerationProvider(?casePropertyName=casePropertyName))
-        generationProviders
-        |> Option.iter (fun providers ->
-            for provider in providers do
-                generator.GenerationProviders.Add(provider))
-
-        generator
+    static let cache = Collections.Concurrent.ConcurrentDictionary<string * Type, JsonSchema>()
+    static let settings =
+        let s = JsonSchemaGeneratorSettings(SerializerSettings=FSharp.Data.Json.DefaultSettings)
+        s.SchemaProcessors.Add(OptionSchemaProcessor())
+        s
 
     /// Creates a generator using the specified casePropertyName and generationProviders.
-    static member Create(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
-        let generator =
-            Generator.CreateInternal(?casePropertyName=casePropertyName,
-                                     ?generationProviders=generationProviders)
-        generator.Generate
+    static member Create(?casePropertyName) =
+        fun ty -> JsonSchema.FromType(ty, settings)
 
     /// Creates a memoized generator that stores generated schemas in a global cache by Type.
-    static member CreateMemoized(?casePropertyName, ?generationProviders:JSchemaGenerationProvider[]) =
+    static member CreateMemoized(?casePropertyName) =
         let casePropertyName = defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
-        let generator =
-            Generator.CreateInternal(casePropertyName=casePropertyName,
-                                     ?generationProviders=generationProviders)
         fun ty ->
-            cache.GetOrAdd((casePropertyName, ty), generator.Generate(ty))
+            cache.GetOrAdd((casePropertyName, ty), JsonSchema.FromType(ty, settings))
 
 module Validation =
 
-    let validate schema json =
-        let jtoken = FSharp.Data.Json.ParseJToken json
-        try
-            jtoken.Validate(schema)
-            Ok()
-        with
-        | :? JSchemaValidationException as e ->
-            Error e
+    let validate schema (json:string) =
+        let validator = Validation.JsonSchemaValidator()
+        let errors = validator.Validate(json, schema)
+        if errors.Count > 0 then Error(Seq.toArray errors) else Ok()
 
     type FSharp.Data.Json with
 
@@ -128,7 +144,7 @@ module Validation =
             |> Result.map (fun _ ->
                 FSharp.Data.Json.Parse<'T> json)
 
-        static member yParseWithValidation<'T>(json, schema, casePropertyName) =
+        static member ParseWithValidation<'T>(json, schema, casePropertyName) =
             validate schema json
             |> Result.map (fun _ ->
                 FSharp.Data.Json.Parse<'T>(json, casePropertyName))

@@ -10,20 +10,31 @@ let tests =
     testList "schema generation" [
         test "Enum generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestEnum",
   "type": "string",
+  "description": "",
+  "x-enumNames": [
+    "First",
+    "Second",
+    "Third"
+  ]
   "enum": [
     "First",
     "Second",
     "Third"
   ]
 }"""
-            let actual = generator(typeof<TestEnum>).ToString()
+            let actual = generator(typeof<TestEnum>).ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
         test "Class generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestRecord",
   "type": "object",
+  "additionalProperties": false
   "properties": {
     "firstName": {
       "type": [
@@ -37,18 +48,16 @@ let tests =
         "null"
       ]
     }
-  },
-  "required": [
-    "firstName",
-    "lastName"
-  ]
+  }
 }"""
-            let actual = generator(typeof<TestClass>).ToString()
+            let actual = generator(typeof<TestClass>).ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
         test "Record generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestRecord",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -64,44 +73,46 @@ let tests =
         "null"
       ]
     }
-  },
-  "required": [
-    "firstName",
-    "lastName"
-  ]
+  }
 }"""
-            let actual = generator(typeof<TestRecord>).ToString()
+            let actual = generator(typeof<TestRecord>).ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
         test "option<'a> generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FSharpOptionOfObject",
   "type": [
-    "string",
-    "number",
-    "integer",
-    "boolean",
-    "object",
     "array",
-    "null"
-  ]
+    "boolean",
+    "integer",
+    "null",
+    "number",
+    "object",
+    "string"
+  ],
+  "additionalProperties": false
 }"""
             let ty = typeof<option<_>>
             let schema = generator(ty)
-            let actual = schema.ToString()
+            let actual = schema.ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
         test "option<int> generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FSharpOptionOfInteger",
   "type": [
     "integer",
     "null"
-  ]
+  ],
+  "additionalProperties": false
 }"""
             let ty = typeof<option<int>>
             let schema = generator(ty)
-            let actual = schema.ToString()
+            let actual = schema.ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
@@ -116,7 +127,7 @@ let tests =
 }"""
             let ty = typeof<TestSingleDU>
             let schema = generator(ty)
-            let actual = schema.ToString()
+            let actual = schema.ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
 
@@ -161,7 +172,7 @@ let tests =
 }"""
             let ty = typeof<TestDU>
             let schema = generator(ty)
-            let actual = schema.ToString()
+            let actual = schema.ToJson()
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
         }
     ]
