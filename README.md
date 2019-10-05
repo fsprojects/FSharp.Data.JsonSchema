@@ -6,13 +6,14 @@ The goal of this project is to provide generation of idiomatic [JSON Schema](htt
 
 [JSON Schema](https://json-schema.org/) is a standard, evolving format for specifying the structure of JSON documents.
 Tools exist for generating nicely formatted JSON from F#, e.g. [FSharpLu.Json](https://github.com/Microsoft/fsharplu), [Newtonsoft.Json.FSharp](https://github.com/haf/Newtonsoft.Json.FSharp), and [Newtonsoft.Json.FSharp.Idiomatic](https://github.com/baronfel/Newtonsoft.Json.FSharp.Idiomatic).
-[Newtonsoft.Json Schema](https://www.newtonsoft.com/jsonschema) provides a way to generate and validate JSON Schema for .NET languages, but these don't necessarily translate well to F# types, e.g. `anyOf` mapping to F#'s discriminated unions.
+[Newtonsoft.Json Schema](https://www.newtonsoft.com/jsonschema) and [NJsonSchema](https://github.com/RicoSuter/NJsonSchema) provide a way to generate and validate JSON Schema for .NET languages, but these don't necessarily translate well to F# types, e.g. `anyOf` mapping to F#'s discriminated unions.
 
 ## Which JSON Schema?
 
 .NET offers several possibile targets:
 
 - [Newtonsoft.Json Schema](https://www.newtonsoft.com/jsonschema) - complete schema generation and validation
+- [NJsonSchema](https://github.com/RicoSuter/NJsonSchema) - OSS JsonSchema generator and validator, used in [NSwag](https://github.com/RicoSuter/NSwag).
 - [OpenAPI.NET](https://github.com/Microsoft/OpenAPI.NET) - part of the Open API toolkit for defining Open API's version of JSON Schema but no built-in validation
 
 ## Approach
