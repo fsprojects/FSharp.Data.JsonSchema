@@ -18,7 +18,7 @@ let tests =
     "First",
     "Second",
     "Third"
-  ]
+  ],
   "enum": [
     "First",
     "Second",
@@ -32,9 +32,9 @@ let tests =
         test "Class generates proper schema" {
             let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "TestRecord",
+  "title": "TestClass",
   "type": "object",
-  "additionalProperties": false
+  "additionalProperties": false,
   "properties": {
     "firstName": {
       "type": [
@@ -141,7 +141,11 @@ let tests =
 
         test "Multi-case DU generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDU",
   "type": "object",
+  "x-abstract": true,
+  "additionalProperties": false,
   "anyOf": [
     {
       "type": "object",
