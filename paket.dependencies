@@ -1,5 +1,6 @@
 source https://ci.appveyor.com/nuget/tachyuscorp-cdj2r7dkqyo6
 source https://api.nuget.org/v3/index.json
+storage: none
 
 nuget Expecto >= 8.0
 nuget FSharp.Core >= 4.0
