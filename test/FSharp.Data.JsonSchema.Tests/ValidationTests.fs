@@ -8,7 +8,7 @@ open Expecto
 let tests =
     let generator = Generator.CreateMemoized("tag")
 
-    ptestList "schema validation" [
+    testList "schema validation" [
         test "Enum validates against schema" {
             let schema = generator(typeof<TestEnum>)
             let json = Json.Serialize(TestEnum.First, "tag")

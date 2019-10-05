@@ -40,95 +40,66 @@ type internal OptionSchemaProcessor() =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
-(*
-open Newtonsoft.Json.Schema
-open Newtonsoft.Json.Schema.Generation
+type internal SingleCaseDuSchemaProcessor() =
 
-type internal OptionGenerationProvider() =
-    inherit JSchemaGenerationProvider()
+    member this.Process(context:SchemaProcessorContext) =
+        if FSharpType.IsUnion(context.Type)
+           && Reflection.allCasesEmpty context.Type then
+            let schema = context.Schema
+            let cases = FSharpType.GetUnionCases(context.Type)
+            schema.Type <- JsonObjectType.String
+            for case in cases do
+                schema.Enumeration.Add(case.Name)
+                schema.EnumerationNames.Add(case.Name)
 
-    static let optionTy = typedefof<option<_>>
+    interface ISchemaProcessor with
+        member this.Process(context) = this.Process(context)
 
-    override __.CanGenerateSchema(context:JSchemaTypeGenerationContext) =
-        context.ObjectType.IsGenericType
-        && optionTy.Equals(context.ObjectType.GetGenericTypeDefinition())
-
-    override __.GetSchema(context:JSchemaTypeGenerationContext) =
-        let cases = FSharpType.GetUnionCases(context.ObjectType)
-        let schemaType =
-            [|for case in cases do
-                match case.Name with
-                | "None" ->
-                    yield JSchemaType.Null
-                | _ ->
-                    let field = case.GetFields() |> Array.head
-                    let propSchema = context.Generator.Generate(field.PropertyType)
-                    if propSchema.Type.HasValue then
-                        // Use the generator to produce a schema for the
-                        // contained type and use it's schema type.
-                        yield propSchema.Type.Value
-                    else
-                        // Use None to represent an unspecified type (e.g. generic or unit)
-                        yield JSchemaType.None|]
-            |> Array.reduce (|||)
-        JSchema(Type=Nullable schemaType)
-
-type internal SingleCaseDuGenerationProvider() =
-    inherit JSchemaGenerationProvider()
-
-    override __.CanGenerateSchema(context:JSchemaTypeGenerationContext) =
-        FSharpType.IsUnion(context.ObjectType)
-        && Reflection.allCasesEmpty context.ObjectType
-
-    override __.GetSchema(context:JSchemaTypeGenerationContext) =
-        let cases = FSharpType.GetUnionCases(context.ObjectType)
-        let schema = JSchema(Type=Nullable JSchemaType.String)
-        for case in cases do
-            schema.Enum.Add(JValue case.Name)
-        schema
-
-type internal MultiCaseDuGenerationProvider(?casePropertyName) =
-    inherit JSchemaGenerationProvider()
-
+type internal MultiCaseDuSchemaProcessor(?casePropertyName) =
     let casePropertyName = defaultArg casePropertyName "kind"
 
-    override __.CanGenerateSchema(context:JSchemaTypeGenerationContext) =
-        FSharpType.IsUnion(context.ObjectType)
-        && not (Reflection.allCasesEmpty context.ObjectType)
-        && not (Reflection.isList context.ObjectType)
-        && not (Reflection.isOption context.ObjectType)
+    member this.Process(context:SchemaProcessorContext) =
+        if FSharpType.IsUnion(context.Type)
+           && not (Reflection.allCasesEmpty context.Type)
+           && not (Reflection.isList context.Type)
+           && not (Reflection.isOption context.Type) then
+            let cases = FSharpType.GetUnionCases(context.Type)
+            let schema = context.Schema
+            schema.Type <- JsonObjectType.Object
+            for case in cases do
+                let propSchema = JsonSchema(Type=JsonObjectType.Object)
+                propSchema.Properties.Add(casePropertyName, JsonSchemaProperty(Type=JsonObjectType.String))
+                let fields = case.GetFields()
+                for field in fields do
+                    let fieldSchema = context.Generator.Generate(field.PropertyType)
+                    propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
+                schema.AnyOf.Add(propSchema)
 
-    override __.GetSchema(context:JSchemaTypeGenerationContext) =
-        let cases = FSharpType.GetUnionCases(context.ObjectType)
-        let schema = JSchema(Type=Nullable JSchemaType.Object)
-        for case in cases do
-            let propSchema = JSchema(Type=Nullable JSchemaType.Object)
-            propSchema.Properties.Add(casePropertyName, JSchema(Type=Nullable JSchemaType.String))
-            let fields = case.GetFields()
-            for field in fields do
-                let fieldSchema = context.Generator.Generate(field.PropertyType)
-                propSchema.Properties.Add(KeyValuePair(field.Name, fieldSchema))
-            schema.AnyOf.Add(propSchema)
-        schema
-*)
+    interface ISchemaProcessor with
+        member this.Process(context) = this.Process(context)
 
 [<AbstractClass; Sealed>]
 type Generator private () =
     static let cache = Collections.Concurrent.ConcurrentDictionary<string * Type, JsonSchema>()
-    static let settings =
-        let s = JsonSchemaGeneratorSettings(SerializerSettings=FSharp.Data.Json.DefaultSettings)
-        s.SchemaProcessors.Add(OptionSchemaProcessor())
-        s
+
+    static member internal CreateInternal(?casePropertyName) =
+        let settings = JsonSchemaGeneratorSettings(SerializerSettings=FSharp.Data.Json.DefaultSettings)
+        settings.SchemaProcessors.Add(OptionSchemaProcessor())
+        settings.SchemaProcessors.Add(SingleCaseDuSchemaProcessor())
+        settings.SchemaProcessors.Add(MultiCaseDuSchemaProcessor(?casePropertyName=casePropertyName))
+        fun ty -> JsonSchema.FromType(ty, settings)
 
     /// Creates a generator using the specified casePropertyName and generationProviders.
     static member Create(?casePropertyName) =
-        fun ty -> JsonSchema.FromType(ty, settings)
+        Generator.CreateInternal(?casePropertyName=casePropertyName)
 
     /// Creates a memoized generator that stores generated schemas in a global cache by Type.
     static member CreateMemoized(?casePropertyName) =
         let casePropertyName = defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
         fun ty ->
-            cache.GetOrAdd((casePropertyName, ty), JsonSchema.FromType(ty, settings))
+            cache.GetOrAdd((casePropertyName, ty),
+                let generator = Generator.CreateInternal(casePropertyName)
+                generator ty)
 
 module Validation =
 

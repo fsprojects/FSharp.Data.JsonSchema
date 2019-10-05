@@ -38,14 +38,14 @@ let tests =
   "properties": {
     "firstName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     },
     "lastName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     }
   }
@@ -63,14 +63,14 @@ let tests =
   "properties": {
     "firstName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     },
     "lastName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     }
   }
@@ -118,7 +118,15 @@ let tests =
 
         test "TestSingleDU generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestSingleDU",
   "type": "string",
+  "additionalProperties": false,
+  "x-enumNames": [
+    "Single",
+    "Double",
+    "Triple"
+  ],
   "enum": [
     "Single",
     "Double",
