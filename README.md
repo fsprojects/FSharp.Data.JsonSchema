@@ -19,5 +19,6 @@ Tools exist for generating nicely formatted JSON from F#, e.g. [FSharpLu.Json](h
 ## Approach
 
 This library takes the approach of using F# Reflection to generate the JSON Schema matching intended JSON output.
-For the initial implementation, FSharp.JsonSchema uses [Newtonsoft.Json.FSharp.Idiomatic](https://github.com/baronfel/Newtonsoft.Json.FSharp.Idiomatic) as its target JSON format.
+For the initial implementation, FSharp.Data.JsonSchema uses [Newtonsoft.Json.FSharp.Idiomatic](https://github.com/baronfel/Newtonsoft.Json.FSharp.Idiomatic) as its target JSON format.
+For the greatest freedom in generating and validating JSON Schema, this library uses [NJsonSchema](https://github.com/RicoSuter/NJsonSchema).
 A later goal is to allow the schema generation to be driven by additional options.
