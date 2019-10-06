@@ -9,7 +9,7 @@ open Newtonsoft.Json.Serialization
 open NJsonSchema
 open NJsonSchema.Generation
 
-type internal OptionSchemaProcessor() =
+type OptionSchemaProcessor() =
     static let optionTy = typedefof<option<_>>
 
     member this.Process(context:SchemaProcessorContext) =
@@ -40,7 +40,7 @@ type internal OptionSchemaProcessor() =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
-type internal SingleCaseDuSchemaProcessor() =
+type SingleCaseDuSchemaProcessor() =
 
     member this.Process(context:SchemaProcessorContext) =
         if FSharpType.IsUnion(context.Type)
@@ -55,7 +55,7 @@ type internal SingleCaseDuSchemaProcessor() =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
-type internal MultiCaseDuSchemaProcessor(?casePropertyName) =
+type MultiCaseDuSchemaProcessor(?casePropertyName) =
     let casePropertyName = defaultArg casePropertyName "kind"
 
     member this.Process(context:SchemaProcessorContext) =
