@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build, test, and package on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use dotnet CLI
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.103' # SDK Version to use.
+    - name: Build
+      run: |
+        dotnet tool install --tool-path ".paket" Paket
+        dotnet build -c Release
+    - name: Test
+      run: dotnet test -c Release --no-build
+    - name: Pack
+      run: dotnet pack -c Release -o bin --no-build
