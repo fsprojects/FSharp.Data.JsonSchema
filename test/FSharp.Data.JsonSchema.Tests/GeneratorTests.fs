@@ -166,46 +166,17 @@ let tests =
     "Case": {
       "allOf": [
         {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
+          "$ref": "#/definitions/TestDU"
+        },
+        {
+          "type": "object"
         }
       ]
     },
     "WithOneField": {
       "allOf": [
         {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
+          "$ref": "#/definitions/TestDU"
         },
         {
           "type": "object",
@@ -223,23 +194,7 @@ let tests =
     "WithNamedFields": {
       "allOf": [
         {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
+          "$ref": "#/definitions/TestDU"
         },
         {
           "type": "object",
@@ -261,99 +216,13 @@ let tests =
   },
   "anyOf": [
     {
-      "allOf": [
-        {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
-        }
-      ]
+      "$ref": "#/definitions/Case"
     },
     {
-      "allOf": [
-        {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "Item"
-          ],
-          "properties": {
-            "Item": {
-              "type": "integer"
-            }
-          }
-        }
-      ]
+      "$ref": "#/definitions/WithOneField"
     },
     {
-      "allOf": [
-        {
-          "type": "object",
-          "discriminator": {
-            "propertyName": "tag"
-          },
-          "required": [
-            "tag"
-          ],
-          "properties": {
-            "tag": {
-              "type": "string",
-              "enum": [
-                "Case",
-                "WithOneField",
-                "WithNamedFields"
-              ]
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "name",
-            "value"
-          ],
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "value": {
-              "type": "number"
-            }
-          }
-        }
-      ]
+      "$ref": "#/definitions/WithNamedFields"
     }
   ]
 }"""

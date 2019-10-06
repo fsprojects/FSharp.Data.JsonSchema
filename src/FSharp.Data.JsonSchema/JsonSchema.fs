@@ -81,20 +81,20 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                 let fields = case.GetFields()
                 let caseSchema = JsonSchema(Type=JsonObjectType.None)
                 // All instances will include the base case schema.
-                caseSchema.AllOf.Add(baseCaseSchema)
-                // If the case has fields, create an additional schema for the additional properties.
-                if not (Seq.isEmpty fields) then
-                    let propSchema = JsonSchema(Type=JsonObjectType.Object)
-                    for field in fields do
-                        let fieldSchema = context.Generator.Generate(field.PropertyType)
-                        propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
-                        propSchema.RequiredProperties.Add(field.Name)
-                    caseSchema.AllOf.Add(propSchema)
+                caseSchema.AllOf.Add(JsonSchema(Reference=baseCaseSchema))
+
+                // Create the schema for the additional properties.
+                let propSchema = JsonSchema(Type=JsonObjectType.Object)
+                for field in fields do
+                    let fieldSchema = context.Generator.Generate(field.PropertyType)
+                    propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
+                    propSchema.RequiredProperties.Add(field.Name)
+                caseSchema.AllOf.Add(propSchema)
 
                 // Attach each case definition.
                 schema.Definitions.Add(case.Name, caseSchema)
                 // Add each schema to the anyOf collection.
-                schema.AnyOf.Add(caseSchema)
+                schema.AnyOf.Add(JsonSchema(Reference=caseSchema))
 
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
