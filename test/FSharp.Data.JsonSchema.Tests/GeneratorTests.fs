@@ -1,4 +1,4 @@
-module FSharp.JsonSchema.Tests.GeneratorTests
+module FSharp.Data.JsonSchema.Tests.GeneratorTests
 
 open FSharp.Data.JsonSchema
 open Expecto
@@ -6,108 +6,128 @@ open Expecto
 [<Tests>]
 let tests =
     let generator = Generator.CreateMemoized("tag")
+    let equal (actual:NJsonSchema.JsonSchema) expected message =
+        let actual = NJsonSchema.JsonSchemaReferenceUtilities.ConvertPropertyReferences(actual.ToJson())
+        Expect.equal (Util.stripWhitespace actual) (Util.stripWhitespace expected) message
 
     testList "schema generation" [
         test "Enum generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestEnum",
   "type": "string",
+  "description": "",
+  "x-enumNames": [
+    "First",
+    "Second",
+    "Third"
+  ],
   "enum": [
     "First",
     "Second",
     "Third"
   ]
 }"""
-            let actual = generator(typeof<TestEnum>).ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(typeof<TestEnum>)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
         test "Class generates proper schema" {
             let expected = """{
-  "type": "object",
-  "properties": {
-    "firstName": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "lastName": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
-  },
-  "required": [
-    "firstName",
-    "lastName"
-  ]
-}"""
-            let actual = generator(typeof<TestClass>).ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
-        }
-
-        test "Record generates proper schema" {
-            let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestClass",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "firstName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     },
     "lastName": {
       "type": [
-        "string",
-        "null"
+        "null",
+        "string"
       ]
     }
-  },
-  "required": [
-    "firstName",
-    "lastName"
-  ]
+  }
 }"""
-            let actual = generator(typeof<TestRecord>).ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(typeof<TestClass>)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+        }
+
+        test "Record generates proper schema" {
+            let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "firstName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "lastName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  }
+}"""
+            let actual = generator(typeof<TestRecord>)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
         test "option<'a> generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FSharpOptionOfObject",
   "type": [
-    "string",
-    "number",
-    "integer",
-    "boolean",
-    "object",
     "array",
-    "null"
-  ]
+    "boolean",
+    "integer",
+    "null",
+    "number",
+    "object",
+    "string"
+  ],
+  "additionalProperties": false
 }"""
             let ty = typeof<option<_>>
-            let schema = generator(ty)
-            let actual = schema.ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(ty)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
         test "option<int> generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FSharpOptionOfInteger",
   "type": [
     "integer",
     "null"
-  ]
+  ],
+  "additionalProperties": false
 }"""
             let ty = typeof<option<int>>
-            let schema = generator(ty)
-            let actual = schema.ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(ty)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
         test "TestSingleDU generates proper schema" {
             let expected = """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestSingleDU",
   "type": "string",
+  "additionalProperties": false,
+  "x-enumNames": [
+    "Single",
+    "Double",
+    "Triple"
+  ],
   "enum": [
     "Single",
     "Double",
@@ -115,53 +135,99 @@ let tests =
   ]
 }"""
             let ty = typeof<TestSingleDU>
-            let schema = generator(ty)
-            let actual = schema.ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(ty)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
         test "Multi-case DU generates proper schema" {
             let expected = """{
-  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDU",
+  "definitions": {
+    "TestDU": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "tag"
+      },
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "enum": [
+            "Case",
+            "WithOneField",
+            "WithNamedFields"
+          ]
+        }
+      }
+    },
+    "Case": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TestDU"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "WithOneField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TestDU"
+        },
+        {
+          "type": "object",
+          "required": [
+            "Item"
+          ],
+          "properties": {
+            "Item": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "WithNamedFields": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TestDU"
+        },
+        {
+          "type": "object",
+          "required": [
+            "name",
+            "value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    }
+  },
   "anyOf": [
     {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
-        }
-      }
+      "$ref": "#/definitions/Case"
     },
     {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
-        },
-        "Item": {
-          "type": "integer"
-        }
-      }
+      "$ref": "#/definitions/WithOneField"
     },
     {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "value": {
-          "type": "number"
-        }
-      }
+      "$ref": "#/definitions/WithNamedFields"
     }
   ]
 }"""
             let ty = typeof<TestDU>
-            let schema = generator(ty)
-            let actual = schema.ToString()
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual expected
+            let actual = generator(ty)
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
     ]

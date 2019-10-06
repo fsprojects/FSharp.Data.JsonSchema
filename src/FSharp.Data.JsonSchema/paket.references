@@ -1,5 +1,4 @@
-Newtonsoft.Json
-Newtonsoft.Json.Schema
 FSharp.Core
-
-File: Newtonsoft.Json.FSharp.Idiomatic.fs .
+Newtonsoft.Json
+NJsonSchema
+File:Newtonsoft.Json.FSharp.Idiomatic.fs .

@@ -7,7 +7,12 @@ open Newtonsoft.Json.FSharp.Idiomatic
 [<AbstractClass; Sealed>]
 type Json private () =
 
-    static let defaultSettings =
+    static let settingsCache =
+        System.Collections.Concurrent.ConcurrentDictionary(dict[|Json.DefaultCasePropertyName, Json.DefaultSettings|])
+
+    static member internal DefaultCasePropertyName = "kind"
+
+    static member DefaultSettings =
         JsonSerializerSettings(
             Converters=[|Converters.StringEnumConverter()
                          OptionConverter()
@@ -15,13 +20,8 @@ type Json private () =
                          MultiCaseDuConverter()|],
             ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
 
-    static let settingsCache =
-        System.Collections.Concurrent.ConcurrentDictionary(dict[|Json.DefaultCasePropertyName, defaultSettings|])
-
-    static member internal DefaultCasePropertyName = "kind"
-
     static member Serialize(value) =
-        JsonConvert.SerializeObject(value, defaultSettings)
+        JsonConvert.SerializeObject(value, Json.DefaultSettings)
 
     static member Serialize(value, casePropertyName) =
         let settings =
@@ -35,7 +35,7 @@ type Json private () =
         JsonConvert.SerializeObject(value, settings)
 
     static member Parse<'T>(json) =
-        JsonConvert.DeserializeObject<'T>(json, defaultSettings)
+        JsonConvert.DeserializeObject<'T>(json, Json.DefaultSettings)
 
     static member Parse<'T>(json, casePropertyName) =
         let settings =

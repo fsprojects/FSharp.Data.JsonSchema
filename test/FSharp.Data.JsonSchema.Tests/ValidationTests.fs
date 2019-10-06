@@ -1,4 +1,4 @@
-module FSharp.JsonSchema.Tests.ValidationTests
+module FSharp.Data.JsonSchema.Tests.ValidationTests
 
 open FSharp.Data
 open FSharp.Data.JsonSchema
@@ -65,7 +65,7 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
-        ptest "Some \"test\" validates against schema for option<string>" {
+        test "Some \"test\" validates against schema for option<string>" {
             let schema = generator(typeof<option<_>>)
             let json = Json.Serialize(Some "test", "tag")
             let actual = Validation.validate schema json
@@ -86,7 +86,7 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
-        ptest "TestSingleDU.Single validates against schema" {
+        test "TestSingleDU.Single validates against schema" {
             let schema = generator(typeof<TestSingleDU>)
             let json = Json.Serialize(TestSingleDU.Single, "tag")
             let actual = Validation.validate schema json
