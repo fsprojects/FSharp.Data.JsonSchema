@@ -145,42 +145,147 @@ let tests =
             let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestDU",
-  "type": "object",
-  "x-abstract": true,
-  "additionalProperties": false,
-  "oneOf": [
-    {
+  "definitions": {
+    "TestDU": {
       "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
+      "discriminator": {
+        "propertyName": "tag"
+      },
+      "required": [
+        "tag"
+      ]
+    },
+    "Case": {
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
         }
-      }
+      ]
+    },
+    "WithOneField": {
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "Item"
+          ],
+          "properties": {
+            "Item": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "WithNamedFields": {
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "name",
+            "value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
+        }
+      ]
     },
     {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
         },
-        "Item": {
-          "type": "integer"
+        {
+          "type": "object",
+          "required": [
+            "Item"
+          ],
+          "properties": {
+            "Item": {
+              "type": "integer"
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "type": "string"
+      "allOf": [
+        {
+          "type": "object",
+          "discriminator": {
+            "propertyName": "tag"
+          },
+          "required": [
+            "tag"
+          ]
         },
-        "name": {
-          "type": "string"
-        },
-        "value": {
-          "type": "number"
+        {
+          "type": "object",
+          "required": [
+            "name",
+            "value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
         }
-      }
+      ]
     }
   ]
 }"""

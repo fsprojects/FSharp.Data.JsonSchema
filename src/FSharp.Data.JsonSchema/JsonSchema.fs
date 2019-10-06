@@ -65,14 +65,30 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
            && not (Reflection.isOption context.Type) then
             let cases = FSharpType.GetUnionCases(context.Type)
             let schema = context.Schema
+            schema.Type <- JsonObjectType.None
+            schema.IsAbstract <- false
+            schema.AllowAdditionalProperties <- true
+
+            let baseCaseSchema =
+                let schema = JsonSchema(Type=JsonObjectType.Object, Discriminator=casePropertyName)
+                schema.RequiredProperties.Add(casePropertyName)
+                schema
+            schema.Definitions.Add(context.Type.Name, baseCaseSchema)
+
             for case in cases do
-                let propSchema = JsonSchema(Type=JsonObjectType.Object)
-                propSchema.Properties.Add(casePropertyName, JsonSchemaProperty(Type=JsonObjectType.String))
                 let fields = case.GetFields()
-                for field in fields do
-                    let fieldSchema = context.Generator.Generate(field.PropertyType)
-                    propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
-                schema.OneOf.Add(propSchema)
+                let caseSchema = JsonSchema(Type=JsonObjectType.None)
+                caseSchema.AllOf.Add(baseCaseSchema)
+                if not (Seq.isEmpty fields) then
+                    let propSchema = JsonSchema(Type=JsonObjectType.Object)
+                    for field in fields do
+                        let fieldSchema = context.Generator.Generate(field.PropertyType)
+                        propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
+                        propSchema.RequiredProperties.Add(field.Name)
+                    caseSchema.AllOf.Add(propSchema)
+
+                schema.Definitions.Add(case.Name, caseSchema)
+                schema.AnyOf.Add(caseSchema)
 
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
