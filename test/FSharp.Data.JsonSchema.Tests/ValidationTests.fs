@@ -1,4 +1,4 @@
-module FSharp.JsonSchema.Tests.ValidationTests
+module FSharp.Data.JsonSchema.Tests.ValidationTests
 
 open FSharp.Data
 open FSharp.Data.JsonSchema
@@ -109,6 +109,7 @@ let tests =
 
         test "TestDU.Case validates against schema" {
             let schema = generator(typeof<TestDU>)
+            let schemaJson = Util.stripWhitespace(schema.ToJson())
             let json = Json.Serialize(TestDU.Case, "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
@@ -116,6 +117,7 @@ let tests =
 
         test "TestDU.WithOneField 1 validates against schema" {
             let schema = generator(typeof<TestDU>)
+            let schemaJson = Util.stripWhitespace(schema.ToJson())
             let json = Json.Serialize(TestDU.WithOneField 1, "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
@@ -123,6 +125,7 @@ let tests =
 
         test "TestDU.WithNamedFields(\"name\", 1.0) validates against schema" {
             let schema = generator(typeof<TestDU>)
+            let schemaJson = Util.stripWhitespace(schema.ToJson())
             let json = Json.Serialize(TestDU.WithNamedFields("name", 1.0), "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())

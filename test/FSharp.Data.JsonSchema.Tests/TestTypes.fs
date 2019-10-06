@@ -1,4 +1,4 @@
-namespace FSharp.JsonSchema.Tests
+namespace FSharp.Data.JsonSchema.Tests
 
 type TestClass() =
     member val FirstName = "" with get, set
@@ -23,3 +23,7 @@ type TestDU =
     | Case
     | WithOneField of int
     | WithNamedFields of name:string * value:float
+
+module Util =
+    let stripWhitespace text =
+        System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

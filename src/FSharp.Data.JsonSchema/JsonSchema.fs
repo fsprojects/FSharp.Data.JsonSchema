@@ -1,4 +1,4 @@
-﻿namespace FSharp.Data.JsonSchema
+namespace FSharp.Data.JsonSchema
 
 open System
 open System.Collections.Generic
@@ -46,8 +46,8 @@ type SingleCaseDuSchemaProcessor() =
         if FSharpType.IsUnion(context.Type)
            && Reflection.allCasesEmpty context.Type then
             let schema = context.Schema
-            let cases = FSharpType.GetUnionCases(context.Type)
             schema.Type <- JsonObjectType.String
+            let cases = FSharpType.GetUnionCases(context.Type)
             for case in cases do
                 schema.Enumeration.Add(case.Name)
                 schema.EnumerationNames.Add(case.Name)
@@ -65,7 +65,6 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
            && not (Reflection.isOption context.Type) then
             let cases = FSharpType.GetUnionCases(context.Type)
             let schema = context.Schema
-            schema.Type <- JsonObjectType.Object
             for case in cases do
                 let propSchema = JsonSchema(Type=JsonObjectType.Object)
                 propSchema.Properties.Add(casePropertyName, JsonSchemaProperty(Type=JsonObjectType.String))
@@ -73,7 +72,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                 for field in fields do
                     let fieldSchema = context.Generator.Generate(field.PropertyType)
                     propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
-                schema.AnyOf.Add(propSchema)
+                schema.OneOf.Add(propSchema)
 
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)

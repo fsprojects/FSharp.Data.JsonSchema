@@ -1,4 +1,4 @@
-module FSharp.JsonSchema.Tests.JsonSerializationTests
+module FSharp.Data.JsonSchema.Tests.JsonSerializationTests
 
 open FSharp.Data
 open Expecto
