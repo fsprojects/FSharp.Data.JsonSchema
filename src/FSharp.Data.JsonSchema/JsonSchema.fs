@@ -64,21 +64,28 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
            && not (Reflection.isList context.Type)
            && not (Reflection.isOption context.Type) then
             let cases = FSharpType.GetUnionCases(context.Type)
+
+            // Set the core schema definition.
             let schema = context.Schema
             schema.Type <- JsonObjectType.None
             schema.IsAbstract <- false
             schema.AllowAdditionalProperties <- true
 
-            let baseCaseSchema =
-                let schema = JsonSchema(Type=JsonObjectType.Object, Discriminator=casePropertyName)
-                schema.RequiredProperties.Add(casePropertyName)
-                schema
+            // Set the base case schema.
+            let baseCaseSchema = JsonSchema(Type=JsonObjectType.Object, Discriminator=casePropertyName)
+            baseCaseSchema.RequiredProperties.Add(casePropertyName)
+            let caseProp = JsonSchemaProperty(Type=JsonObjectType.String)
+            for case in cases do caseProp.Enumeration.Add(case.Name)
+            baseCaseSchema.Properties.Add(casePropertyName, caseProp)
             schema.Definitions.Add(context.Type.Name, baseCaseSchema)
 
+            // Add schemas for each case.
             for case in cases do
                 let fields = case.GetFields()
                 let caseSchema = JsonSchema(Type=JsonObjectType.None)
+                // All instances will include the base case schema.
                 caseSchema.AllOf.Add(baseCaseSchema)
+                // If the case has fields, create an additional schema for the additional properties.
                 if not (Seq.isEmpty fields) then
                     let propSchema = JsonSchema(Type=JsonObjectType.Object)
                     for field in fields do
@@ -87,7 +94,9 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                         propSchema.RequiredProperties.Add(field.Name)
                     caseSchema.AllOf.Add(propSchema)
 
+                // Attach each case definition.
                 schema.Definitions.Add(case.Name, caseSchema)
+                // Add each schema to the anyOf collection.
                 schema.AnyOf.Add(caseSchema)
 
     interface ISchemaProcessor with

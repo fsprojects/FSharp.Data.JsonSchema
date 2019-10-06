@@ -153,7 +153,17 @@ let tests =
       },
       "required": [
         "tag"
-      ]
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "enum": [
+            "Case",
+            "WithOneField",
+            "WithNamedFields"
+          ]
+        }
+      }
     },
     "Case": {
       "allOf": [
@@ -164,7 +174,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         }
       ]
     },
@@ -177,7 +197,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         },
         {
           "type": "object",
@@ -201,7 +231,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         },
         {
           "type": "object",
@@ -231,7 +271,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         }
       ]
     },
@@ -244,7 +294,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         },
         {
           "type": "object",
@@ -268,7 +328,17 @@ let tests =
           },
           "required": [
             "tag"
-          ]
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "enum": [
+                "Case",
+                "WithOneField",
+                "WithNamedFields"
+              ]
+            }
+          }
         },
         {
           "type": "object",
