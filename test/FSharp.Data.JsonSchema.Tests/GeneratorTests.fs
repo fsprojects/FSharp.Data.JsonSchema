@@ -6,7 +6,8 @@ open Expecto
 [<Tests>]
 let tests =
     let generator = Generator.CreateMemoized("tag")
-    let equal actual expected message =
+    let equal (actual:NJsonSchema.JsonSchema) expected message =
+        let actual = NJsonSchema.JsonSchemaReferenceUtilities.ConvertPropertyReferences(actual.ToJson())
         Expect.equal (Util.stripWhitespace actual) (Util.stripWhitespace expected) message
 
     testList "schema generation" [
@@ -27,7 +28,7 @@ let tests =
     "Third"
   ]
 }"""
-            let actual = generator(typeof<TestEnum>).ToJson()
+            let actual = generator(typeof<TestEnum>)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -52,7 +53,7 @@ let tests =
     }
   }
 }"""
-            let actual = generator(typeof<TestClass>).ToJson()
+            let actual = generator(typeof<TestClass>)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -77,7 +78,7 @@ let tests =
     }
   }
 }"""
-            let actual = generator(typeof<TestRecord>).ToJson()
+            let actual = generator(typeof<TestRecord>)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -97,8 +98,7 @@ let tests =
   "additionalProperties": false
 }"""
             let ty = typeof<option<_>>
-            let schema = generator(ty)
-            let actual = schema.ToJson()
+            let actual = generator(ty)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -113,8 +113,7 @@ let tests =
   "additionalProperties": false
 }"""
             let ty = typeof<option<int>>
-            let schema = generator(ty)
-            let actual = schema.ToJson()
+            let actual = generator(ty)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -136,8 +135,7 @@ let tests =
   ]
 }"""
             let ty = typeof<TestSingleDU>
-            let schema = generator(ty)
-            let actual = schema.ToJson()
+            let actual = generator(ty)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
 
@@ -360,8 +358,7 @@ let tests =
   ]
 }"""
             let ty = typeof<TestDU>
-            let schema = generator(ty)
-            let actual = schema.ToJson()
+            let actual = generator(ty)
             "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
         }
     ]

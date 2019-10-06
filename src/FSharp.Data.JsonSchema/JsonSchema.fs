@@ -1,11 +1,8 @@
 namespace FSharp.Data.JsonSchema
 
 open System
-open System.Collections.Generic
 open Microsoft.FSharp.Reflection
-open Newtonsoft.Json.Linq
 open Newtonsoft.Json.FSharp.Idiomatic
-open Newtonsoft.Json.Serialization
 open NJsonSchema
 open NJsonSchema.Generation
 
