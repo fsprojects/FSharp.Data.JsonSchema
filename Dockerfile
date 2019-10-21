@@ -7,8 +7,8 @@ COPY . .
 
 RUN dotnet tool install --tool-path ".paket" Paket
 RUN dotnet restore
-RUN dotnet build -c Release --no-restore --version-suffix $VersionSuffix
-RUN dotnet pack -c Release --no-restore --no-build --version-suffix $VersionSuffix -o /sln/artifacts
+RUN if [ -n "$VersionSuffix" ]; then dotnet build -c Release --no-restore --version-suffix $VersionSuffix; else dotnet build -c Release --no-restore; fi
+RUN if [ -n "$VersionSuffix" ]; then dotnet pack -c Release --no-restore --no-build --version-suffix $VersionSuffix -o /sln/artifacts; else dotnet pack -c Release --no-restore --no-build -o /sln/artifacts; fi
 
 ENTRYPOINT [ "dotnet", "nuget", "push", "/sln/artifacts/*.nupkg" ]
 CMD ["--source", "https://api.nuget.org/v3/index.json"]
