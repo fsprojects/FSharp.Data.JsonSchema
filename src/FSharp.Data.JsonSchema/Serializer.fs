@@ -18,7 +18,8 @@ type Json private () =
                          OptionConverter()
                          SingleCaseDuConverter()
                          MultiCaseDuConverter()|],
-            ContractResolver=Serialization.CamelCasePropertyNamesContractResolver())
+            ContractResolver=Serialization.CamelCasePropertyNamesContractResolver(),
+            NullValueHandling=NullValueHandling.Ignore)
 
     static member Serialize(value) =
         JsonConvert.SerializeObject(value, Json.DefaultSettings)
@@ -31,7 +32,8 @@ type Json private () =
                                  OptionConverter()
                                  SingleCaseDuConverter()
                                  MultiCaseDuConverter(casePropertyName)|],
-                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()))
+                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()),
+                    NullValueHandling=NullValueHandling.Ignore)
         JsonConvert.SerializeObject(value, settings)
 
     static member Parse<'T>(json) =
