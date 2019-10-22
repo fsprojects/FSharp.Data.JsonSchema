@@ -4,6 +4,9 @@
 **/out/
 **/tmp/
 **/.vscode
+**/.ionide
+**/.paket/.store
+**/.paket/paket*
 
 # files
 Dockerfile*
