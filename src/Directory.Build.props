@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>0.0.2</VersionPrefix>
+    <VersionPrefix>0.0.3</VersionPrefix>
     <Owners>Ryan Riley</Owners>
     <Authors>Ryan Riley</Authors>
     <PackageProjectUrl>https://github.com/panesofglass/FSharp.Data.JsonSchema</PackageProjectUrl>
