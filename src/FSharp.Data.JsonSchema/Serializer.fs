@@ -1,54 +1,102 @@
 namespace FSharp.Data
 
-open Newtonsoft.Json
-open Newtonsoft.Json.Linq
-open Newtonsoft.Json.FSharp.Idiomatic
+open System.Text.Json
+open System.Text.Json.Serialization
 
 [<AbstractClass; Sealed>]
 type Json private () =
 
-    static let settingsCache =
-        System.Collections.Concurrent.ConcurrentDictionary(dict[|Json.DefaultCasePropertyName, Json.DefaultSettings|])
+    static let optionsCache =
+        System.Collections.Concurrent.ConcurrentDictionary(dict[|Json.DefaultCasePropertyName, Json.DefaultOptions|])
 
     static member internal DefaultCasePropertyName = "kind"
 
-    static member DefaultSettings =
-        JsonSerializerSettings(
+    static member DefaultOptions =
+        let options = JsonSerializerOptions(IgnoreNullValues=true, PropertyNamingPolicy=JsonNamingPolicy.CamelCase)
+        options.Converters.Add(JsonStringEnumConverter())
+        options.Converters.Add(
+            JsonFSharpConverter(
+                JsonUnionEncoding.InternalTag
+                ||| JsonUnionEncoding.NamedFields
+                ||| JsonUnionEncoding.UnwrapFieldlessTags
+                ||| JsonUnionEncoding.UnwrapOption,
+                unionTagName=Json.DefaultCasePropertyName))
+        options
+(*
+        JsonSerializerOptions(
             Converters=[|Converters.StringEnumConverter()
                          OptionConverter()
                          SingleCaseDuConverter()
                          MultiCaseDuConverter()|],
             ContractResolver=Serialization.CamelCasePropertyNamesContractResolver(),
             NullValueHandling=NullValueHandling.Ignore)
+*)
 
     static member Serialize(value) =
-        JsonConvert.SerializeObject(value, Json.DefaultSettings)
+        JsonSerializer.Serialize(value, Json.DefaultOptions)
 
     static member Serialize(value, casePropertyName) =
-        let settings =
-            settingsCache.GetOrAdd(casePropertyName,
-                JsonSerializerSettings(
-                    Converters=[|Converters.StringEnumConverter()
-                                 OptionConverter()
-                                 SingleCaseDuConverter()
-                                 MultiCaseDuConverter(casePropertyName)|],
-                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()),
-                    NullValueHandling=NullValueHandling.Ignore)
-        JsonConvert.SerializeObject(value, settings)
+        let options =
+            optionsCache.GetOrAdd(casePropertyName,
+                let options = JsonSerializerOptions(IgnoreNullValues=true, PropertyNamingPolicy=JsonNamingPolicy.CamelCase)
+                options.Converters.Add(JsonStringEnumConverter())
+                options.Converters.Add(
+                    JsonFSharpConverter(
+                        JsonUnionEncoding.InternalTag
+                        ||| JsonUnionEncoding.NamedFields
+                        ||| JsonUnionEncoding.UnwrapFieldlessTags
+                        ||| JsonUnionEncoding.UnwrapOption,
+                        unionTagName=casePropertyName))
+                options)
+        JsonSerializer.Serialize(value, options)
 
-    static member Parse<'T>(json) =
-        JsonConvert.DeserializeObject<'T>(json, Json.DefaultSettings)
+    static member Deserialize<'T>(json:System.ReadOnlySpan<byte>) =
+        JsonSerializer.Deserialize<'T>(json, options=Json.DefaultOptions)
+    static member Deserialize<'T>(json:string) =
+        JsonSerializer.Deserialize<'T>(json, options=Json.DefaultOptions)
+    static member Deserialize<'T>(json:byref<Utf8JsonReader>) =
+        JsonSerializer.Deserialize<'T>(&json, options=Json.DefaultOptions)
 
-    static member Parse<'T>(json, casePropertyName) =
-        let settings =
-            settingsCache.GetOrAdd(casePropertyName, fun key ->
-                JsonSerializerSettings(
-                    Converters=[|Converters.StringEnumConverter()
-                                 OptionConverter()
-                                 SingleCaseDuConverter()
-                                 MultiCaseDuConverter(key)|],
-                    ContractResolver=Serialization.CamelCasePropertyNamesContractResolver()))
-        JsonConvert.DeserializeObject<'T>(json, settings)
+    static member Deserialize<'T>(json:System.ReadOnlySpan<byte>, casePropertyName) =
+        let options =
+            optionsCache.GetOrAdd(casePropertyName, fun key ->
+                let options = JsonSerializerOptions(IgnoreNullValues=true, PropertyNamingPolicy=JsonNamingPolicy.CamelCase)
+                options.Converters.Add(JsonStringEnumConverter())
+                options.Converters.Add(
+                    JsonFSharpConverter(
+                        JsonUnionEncoding.InternalTag
+                        ||| JsonUnionEncoding.NamedFields
+                        ||| JsonUnionEncoding.UnwrapFieldlessTags
+                        ||| JsonUnionEncoding.UnwrapOption,
+                        unionTagName=casePropertyName))
+                options)
+        JsonSerializer.Deserialize<'T>(json, options=options)
+    static member Deserialize<'T>(json:string, casePropertyName) =
+        let options =
+            optionsCache.GetOrAdd(casePropertyName, fun key ->
+                let options = JsonSerializerOptions(IgnoreNullValues=true, PropertyNamingPolicy=JsonNamingPolicy.CamelCase)
+                options.Converters.Add(JsonStringEnumConverter())
+                options.Converters.Add(
+                    JsonFSharpConverter(
+                        JsonUnionEncoding.InternalTag
+                        ||| JsonUnionEncoding.NamedFields
+                        ||| JsonUnionEncoding.UnwrapFieldlessTags
+                        ||| JsonUnionEncoding.UnwrapOption,
+                        unionTagName=casePropertyName))
+                options)
+        JsonSerializer.Deserialize<'T>(json, options=options)
+    static member Deserialize<'T>(json:byref<Utf8JsonReader>, casePropertyName) =
+        let options =
+            optionsCache.GetOrAdd(casePropertyName, fun key ->
+                let options = JsonSerializerOptions(IgnoreNullValues=true, PropertyNamingPolicy=JsonNamingPolicy.CamelCase)
+                options.Converters.Add(JsonStringEnumConverter())
+                options.Converters.Add(
+                    JsonFSharpConverter(
+                        JsonUnionEncoding.InternalTag
+                        ||| JsonUnionEncoding.NamedFields
+                        ||| JsonUnionEncoding.UnwrapFieldlessTags
+                        ||| JsonUnionEncoding.UnwrapOption,
+                        unionTagName=casePropertyName))
+                options)
+        JsonSerializer.Deserialize<'T>(&json, options=options)
 
-    static member ParseJToken(json) =
-        JToken.Parse json
