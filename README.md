@@ -1,5 +1,11 @@
 # FSharp.Data.JsonSchema
 
+![Build status](https://github.com/panesofglass/FSharp.Data.JsonSchema/workflows/CI/badge.svg)
+
+[![Build History](https://buildstats.info/github/chart/panesofglass/FSharp.Data.JsonSchema?branch=master)](https://github.com/panesofglass/FSharp.Data.JsonSchema/actions?query=workflow%3ACI)
+
+[![NuGet Badge](https://buildstats.info/nuget/fsharp.data.jsonschema)](https://www.nuget.org/packages/FSharp.Data.JsonSchema/)
+
 The goal of this project is to provide generation of idiomatic [JSON Schema](https://json-schema.org/) definitions for F# types.
 
 ## Why JSON Schema?
