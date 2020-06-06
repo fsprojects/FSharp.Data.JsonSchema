@@ -2,9 +2,15 @@ namespace FSharp.Data.JsonSchema
 
 open System
 open Microsoft.FSharp.Reflection
-open Newtonsoft.Json.FSharp.Idiomatic
 open NJsonSchema
 open NJsonSchema.Generation
+
+/// Microsoft.FSharp.Reflection helpers
+/// see https://github.com/baronfel/Newtonsoft.Json.FSharp.Idiomatic/blob/master/src/Newtonsoft.Json.FSharp.Idiomatic/Newtonsoft.Json.FSharp.Idiomatic.fs#L52-L54
+module Reflection =
+    let allCasesEmpty (y: System.Type) = y |> FSharpType.GetUnionCases |> Array.forall (fun case -> case.GetFields() |> Array.isEmpty)
+    let isList (y: System.Type) = y.IsGenericType && typedefof<List<_>> = y.GetGenericTypeDefinition ()
+    let isOption (y: System.Type) = y.IsGenericType && typedefof<_ option> = y.GetGenericTypeDefinition ()
 
 type OptionSchemaProcessor() =
     static let optionTy = typedefof<option<_>>
@@ -68,28 +74,36 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
             schema.IsAbstract <- false
             schema.AllowAdditionalProperties <- true
 
-            // Set the base case schema.
-            let baseCaseSchema = JsonSchema(Type=JsonObjectType.Object, Discriminator=casePropertyName)
-            baseCaseSchema.RequiredProperties.Add(casePropertyName)
-            let caseProp = JsonSchemaProperty(Type=JsonObjectType.String)
-            for case in cases do caseProp.Enumeration.Add(case.Name)
-            baseCaseSchema.Properties.Add(casePropertyName, caseProp)
-            schema.Definitions.Add(context.Type.Name, baseCaseSchema)
-
             // Add schemas for each case.
             for case in cases do
                 let fields = case.GetFields()
-                let caseSchema = JsonSchema(Type=JsonObjectType.None)
-                // All instances will include the base case schema.
-                caseSchema.AllOf.Add(JsonSchema(Reference=baseCaseSchema))
+                let caseSchema =
+                    if Array.isEmpty fields then
+                        let s = JsonSchema(Type=JsonObjectType.String, Default=case.Name)
+                        s.Enumeration.Add(case.Name)
+                        s.EnumerationNames.Add(case.Name)
+                        s
+                    else
+                        // Create the schema for the additional properties.
+                        let s = JsonSchema(Type=JsonObjectType.Object)
 
-                // Create the schema for the additional properties.
-                let propSchema = JsonSchema(Type=JsonObjectType.Object)
-                for field in fields do
-                    let fieldSchema = context.Generator.Generate(field.PropertyType)
-                    propSchema.Properties.Add(field.Name, JsonSchemaProperty(Type=fieldSchema.Type))
-                    propSchema.RequiredProperties.Add(field.Name)
-                caseSchema.AllOf.Add(propSchema)
+                        // Add the discriminator property
+                        let caseProp = JsonSchemaProperty(Type=JsonObjectType.String, Default=case.Name)
+                        caseProp.Enumeration.Add(case.Name)
+                        caseProp.EnumerationNames.Add(case.Name)
+                        s.Properties.Add(casePropertyName, caseProp)
+                        s.RequiredProperties.Add(casePropertyName)
+
+                        // Add the remaining fields
+                        for field in fields do
+                            let camelCaseFieldName =
+                                if String.IsNullOrEmpty(field.Name) then field.Name
+                                elif String.length field.Name = 1 then string(Char.ToLowerInvariant field.Name.[0])
+                                else string(Char.ToLowerInvariant field.Name.[0]) + field.Name.Substring(1)
+                            let fieldSchema = context.Generator.Generate(field.PropertyType)
+                            s.Properties.Add(camelCaseFieldName, JsonSchemaProperty(Type=fieldSchema.Type))
+                            s.RequiredProperties.Add(camelCaseFieldName)
+                        s
 
                 // Attach each case definition.
                 schema.Definitions.Add(case.Name, caseSchema)
@@ -104,7 +118,7 @@ type Generator private () =
     static let cache = Collections.Concurrent.ConcurrentDictionary<string * Type, JsonSchema>()
 
     static member internal CreateInternal(?casePropertyName) =
-        let settings = JsonSchemaGeneratorSettings(SerializerSettings=FSharp.Data.Json.DefaultSettings)
+        let settings = JsonSchemaGeneratorSettings(SerializerOptions=FSharp.Data.Json.DefaultOptions)
         settings.SchemaProcessors.Add(OptionSchemaProcessor())
         settings.SchemaProcessors.Add(SingleCaseDuSchemaProcessor())
         settings.SchemaProcessors.Add(MultiCaseDuSchemaProcessor(?casePropertyName=casePropertyName))
@@ -131,12 +145,12 @@ module Validation =
 
     type FSharp.Data.Json with
 
-        static member ParseWithValidation<'T>(json, schema) =
+        static member DeserializeWithValidation<'T>(json, schema) =
             validate schema json
             |> Result.map (fun _ ->
-                FSharp.Data.Json.Parse<'T> json)
+                FSharp.Data.Json.Deserialize<'T> json)
 
-        static member ParseWithValidation<'T>(json, schema, casePropertyName) =
+        static member DeserializeWithValidation<'T>(json, schema, casePropertyName) =
             validate schema json
             |> Result.map (fun _ ->
-                FSharp.Data.Json.Parse<'T>(json, casePropertyName))
+                FSharp.Data.Json.Deserialize<'T>(json, casePropertyName))

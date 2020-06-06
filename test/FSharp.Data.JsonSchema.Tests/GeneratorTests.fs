@@ -144,74 +144,51 @@ let tests =
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestDU",
   "definitions": {
-    "TestDU": {
+    "Case": {
+      "type": "string",
+      "default": "Case",
+      "x-enumNames": ["Case"],
+      "enum": ["Case"]
+    },
+    "WithOneField": {
       "type": "object",
-      "discriminator": {
-        "propertyName": "tag"
-      },
       "required": [
-        "tag"
+        "tag",
+        "item"
       ],
       "properties": {
         "tag": {
           "type": "string",
-          "enum": [
-            "Case",
-            "WithOneField",
-            "WithNamedFields"
-          ]
+          "default": "WithOneField",
+          "x-enumNames": ["WithOneField"],
+          "enum": ["WithOneField"]
+        },
+        "item": {
+          "type": "integer"
         }
       }
     },
-    "Case": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/TestDU"
-        },
-        {
-          "type": "object"
-        }
-      ]
-    },
-    "WithOneField": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/TestDU"
-        },
-        {
-          "type": "object",
-          "required": [
-            "Item"
-          ],
-          "properties": {
-            "Item": {
-              "type": "integer"
-            }
-          }
-        }
-      ]
-    },
     "WithNamedFields": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/TestDU"
+      "type": "object",
+      "required": [
+        "tag",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "WithNamedFields",
+          "x-enumNames": ["WithNamedFields"],
+          "enum": ["WithNamedFields"]
         },
-        {
-          "type": "object",
-          "required": [
-            "name",
-            "value"
-          ],
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "value": {
-              "type": "number"
-            }
-          }
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
         }
-      ]
+      }
     }
   },
   "anyOf": [

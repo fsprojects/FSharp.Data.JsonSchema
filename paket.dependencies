@@ -1,12 +1,11 @@
-source https://ci.appveyor.com/nuget/tachyuscorp-cdj2r7dkqyo6
+version 5.245.1
 source https://api.nuget.org/v3/index.json
+framework: auto-detect
 storage: none
 
 nuget Expecto >= 8.0
 nuget FSharp.Core >= 4.0
+nuget FSharp.SystemTextJson
 nuget Microsoft.NET.Test.Sdk >= 16.0
-nuget Newtonsoft.Json >= 12.0.2
 nuget NJsonSchema
 nuget YoloDev.Expecto.TestSdk
-
-github baronfel/Newtonsoft.Json.FSharp.Idiomatic src/Newtonsoft.Json.FSharp.Idiomatic/Newtonsoft.Json.FSharp.Idiomatic.fs
