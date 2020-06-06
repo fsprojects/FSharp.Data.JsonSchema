@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    tags: v[1-9]+.[0-9]+.[0-9]+
     branches:
       - master
   pull_request:
@@ -10,12 +11,8 @@ on:
 
 jobs:
   build:
-    name: Build and test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-    
+    name: Build, test, and pack
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Use dotnet CLI
@@ -29,21 +26,8 @@ jobs:
         dotnet build -c Release --no-restore
     - name: Test
       run: dotnet test -c Release --no-restore --no-build
-
-  publish:
-    needs: build
-    name: Publish
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: publish on version change
-      id: publish_nuget
-      uses: rohith/publish-nuget@v2
-      with:
-        PROJECT_FILE_PATH: src/FSharp.Data.JsonSchema/FSharp.Data.JsonSchema.fsproj
-        VERSION_FILE_PATH: src/Directory.Build.props
-        VERSION_REGEX: <VersionPrefix>(.*)<\/VersionPrefix>
-        TAG_COMMIT: true
-        TAG_FORMAT: v*
-        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-        INCLUDE_SYMBOLS: false
+    - name: Pack
+      run: dotnet pack -c Release --no-restore --no-build --include-symbols
+    - name: Push
+      if: startsWith( github.ref, 'refs/tags/v' )
+      run: dotnet nuget push ./bin/*.*nupkg --source https://api.nuget.org/v3/index.json --api-key {{ secrets.NUGET_API_KEY }}
