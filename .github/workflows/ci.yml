@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build, test, and package on ${{ matrix.os }}
+    name: Build and test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -24,6 +24,7 @@ jobs:
         dotnet-version: '3.1.x' # SDK Version to use.
     - name: Build
       run: |
+        dotnet tool restore
         dotnet restore
         dotnet build -c Release --no-restore
     - name: Test
@@ -33,14 +34,15 @@ jobs:
     name: publish
     runs-on: ubuntu-latest
     steps:
-      - name: publish on version change
-        id: publish_nuget
-        uses: rohith/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: src/FSharp.Data.JsonSchema/FSharp.Data.JsonSchema.fsproj
-          VERSION_FILE_PATH: src/Directory.Build.props
-          VERSION_REGEX: <VersionPrefix>(.*)<\/VersionPrefix>
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          INCLUDE_SYMBOLS: false
+    - uses: actions/checkout@v2
+    - name: publish on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: src/FSharp.Data.JsonSchema/FSharp.Data.JsonSchema.fsproj
+        VERSION_FILE_PATH: src/Directory.Build.props
+        VERSION_REGEX: <VersionPrefix>(.*)<\/VersionPrefix>
+        TAG_COMMIT: true
+        TAG_FORMAT: v*
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        INCLUDE_SYMBOLS: false
