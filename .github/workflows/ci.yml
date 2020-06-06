@@ -32,8 +32,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
-        name: nupkg
-        path: ./out
+        name: packages
+        path: ./out/*.*nupkg
     - name: Push
       if: startsWith( github.ref, 'refs/tags/v' )
       run: dotnet nuget push out/*.*nupkg --source https://api.nuget.org/v3/index.json --api-key {{ secrets.NUGET_API_KEY }}
