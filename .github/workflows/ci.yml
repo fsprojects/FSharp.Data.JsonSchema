@@ -31,7 +31,8 @@ jobs:
       run: dotnet test -c Release --no-restore --no-build
 
   publish:
-    name: publish
+    needs: build
+    name: Publish
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
