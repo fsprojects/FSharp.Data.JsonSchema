@@ -17,17 +17,30 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Use dotnet CLI
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.1.x' # SDK Version to use.
     - name: Build
       run: |
-        dotnet tool install --tool-path ".paket" Paket
         dotnet restore
         dotnet build -c Release --no-restore
     - name: Test
       run: dotnet test -c Release --no-restore --no-build
-    - name: Pack
-      run: dotnet pack -c Release -o bin --no-restore --no-build
+
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: publish on version change
+        id: publish_nuget
+        uses: rohith/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: src/FSharp.Data.JsonSchema/FSharp.Data.JsonSchema.fsproj
+          VERSION_FILE_NAME: src/Directory.Build.props
+          VERSION_REGEX: <VersionPrefix>(.*)<\/VersionPrefix>
+          TAG_COMMIT: true
+          TAG_FORMAT: v*
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          INCLUDE_SYMBOLS: false
