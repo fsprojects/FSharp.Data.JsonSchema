@@ -26,7 +26,7 @@ jobs:
         dotnet restore
         dotnet build -c Release --no-restore
     - name: Test
-      run: dotnet test -c Release --no-restore --no-build
+      run: dotnet test -c Release --no-restore --no-build --logger "GitHubActions;report-warnings=false"
     - name: Pack
       run: dotnet pack -c Release --no-restore --no-build --include-symbols -o out
     - name: Upload artifact

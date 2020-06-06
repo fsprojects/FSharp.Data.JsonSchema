@@ -15,5 +15,8 @@
     <Compile Include="ValidationTests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GitHubActionsTestLogger" Version="1.1.0" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
