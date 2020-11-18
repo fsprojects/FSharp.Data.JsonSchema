@@ -6,13 +6,15 @@ open Expecto
 [<Tests>]
 let tests =
     let generator = Generator.CreateMemoized("tag")
-    let equal (actual:NJsonSchema.JsonSchema) expected message =
-        let actual = NJsonSchema.JsonSchemaReferenceUtilities.ConvertPropertyReferences(actual.ToJson())
+
+    let equal (actual: NJsonSchema.JsonSchema) expected message =
+        let actual = actual.ToJson()
         Expect.equal (Util.stripWhitespace actual) (Util.stripWhitespace expected) message
 
-    testList "schema generation" [
-        test "Enum generates proper schema" {
-            let expected = """{
+    testList
+        "schema generation"
+        [ test "Enum generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestEnum",
   "type": "string",
@@ -28,12 +30,13 @@ let tests =
     "Third"
   ]
 }"""
-            let actual = generator(typeof<TestEnum>)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "Class generates proper schema" {
-            let expected = """{
+              let actual = generator (typeof<TestEnum>)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "Class generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestClass",
   "type": "object",
@@ -53,12 +56,13 @@ let tests =
     }
   }
 }"""
-            let actual = generator(typeof<TestClass>)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "Record generates proper schema" {
-            let expected = """{
+              let actual = generator (typeof<TestClass>)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "Record generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestRecord",
   "type": "object",
@@ -78,12 +82,13 @@ let tests =
     }
   }
 }"""
-            let actual = generator(typeof<TestRecord>)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "option<'a> generates proper schema" {
-            let expected = """{
+              let actual = generator (typeof<TestRecord>)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "option<'a> generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "FSharpOptionOfObject",
   "type": [
@@ -97,13 +102,14 @@ let tests =
   ],
   "additionalProperties": false
 }"""
-            let ty = typeof<option<_>>
-            let actual = generator(ty)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "option<int> generates proper schema" {
-            let expected = """{
+              let ty = typeof<option<_>>
+              let actual = generator (ty)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "option<int> generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "FSharpOptionOfInteger",
   "type": [
@@ -112,13 +118,14 @@ let tests =
   ],
   "additionalProperties": false
 }"""
-            let ty = typeof<option<int>>
-            let actual = generator(ty)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "TestSingleDU generates proper schema" {
-            let expected = """{
+              let ty = typeof<option<int>>
+              let actual = generator (ty)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "TestSingleDU generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestSingleDU",
   "type": "string",
@@ -134,13 +141,14 @@ let tests =
     "Triple"
   ]
 }"""
-            let ty = typeof<TestSingleDU>
-            let actual = generator(ty)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
 
-        test "Multi-case DU generates proper schema" {
-            let expected = """{
+              let ty = typeof<TestSingleDU>
+              let actual = generator (ty)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "Multi-case DU generates proper schema" {
+              let expected = """{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TestDU",
   "definitions": {
@@ -203,8 +211,8 @@ let tests =
     }
   ]
 }"""
-            let ty = typeof<TestDU>
-            let actual = generator(ty)
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
-        }
-    ]
+
+              let ty = typeof<TestDU>
+              let actual = generator (ty)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          } ]
