@@ -22,7 +22,6 @@ jobs:
         dotnet-version: '5.0.x' # SDK Version to use.
     - name: Build
       run: |
-        dotnet tool restore
         dotnet restore
         dotnet build -c Release --no-restore
     - name: Test
