@@ -4,9 +4,7 @@ type TestClass() =
     member val FirstName = "" with get, set
     member val LastName = "" with get, set
 
-type TestRecord =
-    { FirstName : string
-      LastName : string }
+type TestRecord = { FirstName: string; LastName: string }
 
 type TestEnum =
     | First = 0
@@ -22,7 +20,15 @@ type TestSingleDU =
 type TestDU =
     | Case
     | WithOneField of int
-    | WithNamedFields of name:string * value:float
+    | WithNamedFields of name: string * value: float
+
+type Nested =
+    | Rec of TestRecord
+    | Du of TestDU
+    | SingleDu of TestSingleDU
+    | Enum of TestEnum
+    | Class of TestClass
+    | Opt of TestRecord option
 
 module Util =
     let stripWhitespace text =
