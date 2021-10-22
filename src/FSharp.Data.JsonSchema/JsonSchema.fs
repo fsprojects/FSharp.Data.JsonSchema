@@ -1,6 +1,7 @@
 namespace FSharp.Data.JsonSchema
 
 open System
+open System.Collections.Generic
 open Microsoft.FSharp.Reflection
 open NJsonSchema
 open NJsonSchema.Generation
@@ -96,6 +97,8 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
             schema.IsAbstract <- false
             schema.AllowAdditionalProperties <- true
 
+            let fieldSchemaCache = Dictionary<Type, JsonSchema>()
+
             // Add schemas for each case.
             for case in cases do
                 let fields = case.GetFields()
@@ -137,35 +140,38 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                 let innerTy =
                                     field.PropertyType.GetGenericArguments().[0]
 
-                                let fieldSchema = context.Generator.Generate(innerTy)
-
-                                if not (isPrimitive innerTy) then
-                                    context.Resolver.AppendSchema(fieldSchema, typeNameHint = innerTy.Name)
+                                let fieldSchema =
+                                    match fieldSchemaCache.TryGetValue innerTy with
+                                    | true, fs -> fs
+                                    | _ -> context.Generator.Generate(innerTy)
 
                                 let prop =
-                                    if isPrimitive field.PropertyType then
+                                    if isPrimitive innerTy then
                                         JsonSchemaProperty(Type = fieldSchema.Type)
                                     else
-                                        context.Resolver.AppendSchema(
-                                            fieldSchema,
-                                            typeNameHint = field.PropertyType.Name
-                                        )
+                                        if not (fieldSchemaCache.ContainsKey innerTy) then
+                                            context.Resolver.AppendSchema(fieldSchema, typeNameHint = innerTy.Name)
+                                            fieldSchemaCache.Add(innerTy, fieldSchema)
 
                                         JsonSchemaProperty(Reference = fieldSchema)
 
                                 s.Properties.Add(camelCaseFieldName, prop)
                             else
                                 let fieldSchema =
-                                    context.Generator.Generate(field.PropertyType)
+                                    match fieldSchemaCache.TryGetValue field.PropertyType with
+                                    | true, fs -> fs
+                                    | _ -> context.Generator.Generate(field.PropertyType)
 
                                 let prop =
                                     if isPrimitive field.PropertyType then
                                         JsonSchemaProperty(Type = fieldSchema.Type)
                                     else
-                                        context.Resolver.AppendSchema(
-                                            fieldSchema,
-                                            typeNameHint = field.PropertyType.Name
-                                        )
+                                        if not (fieldSchemaCache.ContainsKey field.PropertyType) then
+                                            context.Resolver.AppendSchema(
+                                                fieldSchema,
+                                                typeNameHint = field.PropertyType.Name
+                                            )
+                                            fieldSchemaCache.Add(field.PropertyType, fieldSchema)
 
                                         JsonSchemaProperty(Reference = fieldSchema)
 

@@ -458,19 +458,6 @@ let tests =
         }
       }
     },
-    "TestRecord2": {
-      "title": "TestRecord",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        }
-      }
-    },
     "Opt": {
       "type": "object",
       "required": [
@@ -488,7 +475,7 @@ let tests =
           ]
         },
         "item": {
-          "$ref": "#/definitions/TestRecord2"
+          "$ref": "#/definitions/TestRecord"
         }
       }
     }
