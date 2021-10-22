@@ -249,4 +249,10 @@ let tests =
                   Json.Deserialize(Json.Serialize(expected))
 
               Expect.equal actual expected "Expected serializer to roundtrip DU with nested None"
+          }
+
+          test "Required string fields should not accept missing or null values" {
+              Expect.throws
+                  (fun () -> Json.Deserialize<TestRecord>("{}") |> ignore)
+                  "Expected serializer to enforce string fields"
           } ]
