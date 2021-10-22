@@ -189,6 +189,7 @@ docs/content/license.md
 docs/content/release-notes.md
 .fake/
 .paket/
+.idea/
 .ionide/
 docs/tools/FSharp.Formatting.svclog
 TestResult.xml
