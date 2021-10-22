@@ -71,7 +71,10 @@ let tests =
   "additionalProperties": false,
   "properties": {
     "outer1": {
-      "$ref": "#/definitions/Inner"
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/definitions/Inner" }
+      ]
     }
   },
   "definitions": {

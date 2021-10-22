@@ -82,7 +82,7 @@ let tests =
               let expected =
                   """{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "FSharpOptionOfObject",
+  "title": "Any",
   "type": [
     "array",
     "boolean",
@@ -104,12 +104,12 @@ let tests =
               let expected =
                   """{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "FSharpOptionOfInteger",
+  "title": "Integer",
   "type": [
     "integer",
     "null"
   ],
-  "additionalProperties": false
+  "format": "int32"
 }"""
 
               let ty = typeof<option<int>>
@@ -518,12 +518,12 @@ let tests =
       "type": "string"
     },
     "description": {
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ]
     }
-  },
-  "required": [
-    "name"
-  ]
+  }
 }"""
 
               let actual = generator (typeof<RecWithOption>)

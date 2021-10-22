@@ -3,7 +3,9 @@ namespace FSharp.Data.JsonSchema
 open System
 open System.Collections.Generic
 open Microsoft.FSharp.Reflection
+open Namotion.Reflection
 open NJsonSchema
+open NJsonSchema.Annotations
 open NJsonSchema.Generation
 
 /// Microsoft.FSharp.Reflection helpers
@@ -171,6 +173,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                                 fieldSchema,
                                                 typeNameHint = field.PropertyType.Name
                                             )
+
                                             fieldSchemaCache.Add(field.PropertyType, fieldSchema)
 
                                         JsonSchemaProperty(Reference = fieldSchema)
@@ -188,6 +191,42 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
+[<Sealed>]
+type internal SchemaNameGenerator() =
+    inherit DefaultSchemaNameGenerator()
+
+    override this.Generate(ty: Type) =
+        let cachedType = ty.ToCachedType()
+
+        if cachedType.Type = typeof<option<obj>> then
+            "Any"
+        elif cachedType.Type.IsGenericType
+           && cachedType.Type.GetGenericTypeDefinition() = typedefof<option<_>> then
+            this.Generate(cachedType.GenericArguments.[0].OriginalType)
+        else
+            base.Generate(ty)
+
+[<Sealed>]
+type internal ReflectionService() =
+    inherit DefaultReflectionService()
+
+    override this.GetDescription(contextualType, defaultReferenceTypeNullHandling, settings) =
+        if contextualType.Type = typeof<option<obj>> then
+            JsonTypeDescription.Create(contextualType, JsonObjectType.Object, true, null)
+        elif contextualType.Type.IsConstructedGenericType
+           && contextualType.Type.GetGenericTypeDefinition() = typedefof<option<_>> then
+            let typeDescription =
+                this.GetDescription(
+                    contextualType.OriginalGenericArguments.[0],
+                    defaultReferenceTypeNullHandling,
+                    settings
+                )
+
+            typeDescription.IsNullable <- true
+            typeDescription
+        else
+            base.GetDescription(contextualType, defaultReferenceTypeNullHandling, settings)
+
 [<AbstractClass; Sealed>]
 type Generator private () =
     static let cache =
@@ -197,7 +236,9 @@ type Generator private () =
         let settings =
             JsonSchemaGeneratorSettings(
                 SerializerOptions = FSharp.Data.Json.DefaultOptions,
-                DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull
+                DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull,
+                ReflectionService = ReflectionService(),
+                SchemaNameGenerator = SchemaNameGenerator()
             )
 
         settings.SchemaProcessors.Add(OptionSchemaProcessor())
