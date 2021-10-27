@@ -33,11 +33,14 @@ jobs:
       with:
         name: nupkg
         path: ./out
+    - name: Set env
+      if: startsWith( github.ref, 'refs/tags/v' )
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF#refs/*/})
     - name: Push
       if: startsWith( github.ref, 'refs/tags/v' )
       env:
         API_KEY: ${{ secrets.NUGET_API_KEY }}
         SOURCE: 'https://api.nuget.org/v3/index.json'
       run: |
-        dotnet nuget push out/*.*nupkg --source $SOURCE --api-key $API_KEY
+        dotnet nuget push out/FSharp.Data.JsonSchema.${RELEASE_VERSION:1}.nupkg --source $SOURCE --api-key $API_KEY
 
