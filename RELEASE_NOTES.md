@@ -1,3 +1,7 @@
+### New in 2.0.0 - (Released TBD)
+* Fix nested type schema generation (#10)
+* Enforce required and optional fields, particularly strings (#11)
+
 ### New in 1.0.0 - (Released 2020/11/18)
 * Explicit support for .NET 5.0
 

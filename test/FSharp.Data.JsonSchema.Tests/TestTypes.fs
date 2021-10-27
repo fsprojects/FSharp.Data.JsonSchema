@@ -30,6 +30,10 @@ type Nested =
     | Class of TestClass
     | Opt of TestRecord option
 
+type RecWithOption =
+    { Name: string
+      Description: string option }
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")
