@@ -529,4 +529,35 @@ let tests =
 
               let actual = generator (typeof<RecWithOption>)
               "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+
+          test "PaginatedResult<'T> generates proper schema" {
+              let expected =
+                  """{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "PaginatedResultOfObject",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "page": {
+      "type": "integer",
+      "format":"int32"
+    },
+    "perPage": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "total": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "results": {
+      "type": "array",
+      "items": {}
+    }
+  }
+}"""
+
+              let actual = generator (typeof<PaginatedResult<_>>)
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
           } ]

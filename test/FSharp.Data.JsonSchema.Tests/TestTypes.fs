@@ -37,3 +37,9 @@ type RecWithOption =
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")
+
+type PaginatedResult<'T> =
+    { Page: int
+      PerPage: int
+      Total: int
+      Results: 'T seq }
