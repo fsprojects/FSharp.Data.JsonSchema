@@ -1,4 +1,5 @@
-### New in 2.0.0 - (Released TBD)
+### New in 2.0.0 - (Released 2021/11/03)
+* Fix stack overflow when generating schema for `seq<'a>` with an open generic parameter (#7)
 * Fix nested type schema generation (#10)
 * Enforce required and optional fields, particularly strings (#11)
 
