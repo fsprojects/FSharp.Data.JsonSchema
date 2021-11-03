@@ -255,4 +255,14 @@ let tests =
               Expect.throws
                   (fun () -> Json.Deserialize<TestRecord>("{}") |> ignore)
                   "Expected serializer to enforce string fields"
+          }
+
+          test "Optional string field not required to be explicitly null" {
+              let expected =
+                  { RecWithOption.Name = "Ryan"
+                    Description = None }
+
+              let actual = Json.Deserialize("""{"name":"Ryan"}""")
+
+              Expect.equal actual expected "Expected serializer to accept missing, optional field"
           } ]
