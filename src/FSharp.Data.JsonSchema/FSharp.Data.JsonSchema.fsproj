@@ -8,7 +8,7 @@
     <Compile Include="JsonSchema.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FSharp.SystemTextJson" Version="0.14.8" />
-    <PackageReference Include="NJsonSchema" Version="10.3.1" />
+    <PackageReference Include="FSharp.SystemTextJson" Version="0.17.*" />
+    <PackageReference Include="NJsonSchema" Version="10.*" />
   </ItemGroup>
 </Project>

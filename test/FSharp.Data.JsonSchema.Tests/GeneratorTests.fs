@@ -92,6 +92,7 @@ let tests =
     "object",
     "string"
   ],
+  "description": "The type of optional values. When used from other CLI languages the\nempty option is the null value.",
   "additionalProperties": false
 }"""
 
