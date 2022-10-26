@@ -601,5 +601,4 @@ let tests =
 """
               let actual = generator typeof<TestList>
               "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected 
-              printfn $"{actual.ToJson()}"
           } ]
