@@ -559,4 +559,47 @@ let tests =
 
               let actual = generator (typeof<PaginatedResult<_>>)
               "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
+          }
+          
+          test "FSharp list generates proper schema" {
+              let expected = """
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestList",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "name": {
+      "type": "string"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestRecord"
+      }
+    }
+  },
+  "definitions": {
+    "TestRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+"""
+              let actual = generator typeof<TestList>
+              "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected 
+              printfn $"{actual.ToJson()}"
           } ]
