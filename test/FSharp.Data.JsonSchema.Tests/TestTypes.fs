@@ -6,6 +6,11 @@ type TestClass() =
 
 type TestRecord = { FirstName: string; LastName: string }
 
+type TestList =
+    { Id: int
+      Name: string
+      Records: TestRecord list }
+
 type TestEnum =
     | First = 0
     | Second = 1

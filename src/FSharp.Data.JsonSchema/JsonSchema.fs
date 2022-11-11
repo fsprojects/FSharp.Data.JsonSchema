@@ -18,7 +18,8 @@ module Reflection =
 
     let isList (y: System.Type) =
         y.IsGenericType
-        && typedefof<List<_>> = y.GetGenericTypeDefinition()
+        && (typedefof<List<_>>.Equals(y.GetGenericTypeDefinition())
+            || typedefof<list<_>>.Equals(y.GetGenericTypeDefinition()))
 
     let isOption (y: System.Type) =
         y.IsGenericType
