@@ -1,3 +1,6 @@
+### New in 2.0.1 - (Released 2022/11/10)
+* Fix generation of F# list type (#12)
+
 ### New in 2.0.0 - (Released 2021/11/03)
 * Fix stack overflow when generating schema for `seq<'a>` with an open generic parameter (#7)
 * Fix nested type schema generation (#10)
