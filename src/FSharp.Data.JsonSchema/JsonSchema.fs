@@ -113,6 +113,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
 
                         s.Enumeration.Add(case.Name)
                         s.EnumerationNames.Add(case.Name)
+                        s.AllowAdditionalProperties <- false
                         s
                     else
                         // Create the schema for the additional properties.
@@ -126,6 +127,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                         caseProp.EnumerationNames.Add(case.Name)
                         s.Properties.Add(casePropertyName, caseProp)
                         s.RequiredProperties.Add(casePropertyName)
+                        s.AllowAdditionalProperties <- false
 
                         // Add the remaining fields
                         for field in fields do
@@ -181,7 +183,6 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
 
                                 s.Properties.Add(camelCaseFieldName, prop)
                                 s.RequiredProperties.Add(camelCaseFieldName)
-
                         s
 
                 // Attach each case definition.

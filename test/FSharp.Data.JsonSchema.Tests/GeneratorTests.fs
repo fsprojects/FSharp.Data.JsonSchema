@@ -150,11 +150,13 @@ let tests =
     "Case": {
       "type": "string",
       "default": "Case",
+      "additionalProperties": false,
       "x-enumNames": ["Case"],
       "enum": ["Case"]
     },
     "WithOneField": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -173,6 +175,7 @@ let tests =
     },
     "WithNamedFields": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "name",
@@ -233,6 +236,7 @@ let tests =
     },
     "Rec": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -259,6 +263,7 @@ let tests =
         "Case": {
           "type": "string",
           "default": "Case",
+          "additionalProperties": false,
           "x-enumNames": [
             "Case"
           ],
@@ -268,6 +273,7 @@ let tests =
         },
         "WithOneField": {
           "type": "object",
+          "additionalProperties": false,
           "required": [
             "tag",
             "item"
@@ -290,6 +296,7 @@ let tests =
         },
         "WithNamedFields": {
           "type": "object",
+          "additionalProperties": false,
           "required": [
             "tag",
             "name",
@@ -329,6 +336,7 @@ let tests =
     },
     "Du": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -366,6 +374,7 @@ let tests =
     },
     "SingleDu": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -403,6 +412,7 @@ let tests =
     },
     "Enum": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -438,6 +448,7 @@ let tests =
     },
     "Class": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag",
         "item"
@@ -460,6 +471,7 @@ let tests =
     },
     "Opt": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "tag"
       ],
