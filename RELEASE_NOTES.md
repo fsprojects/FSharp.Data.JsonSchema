@@ -1,3 +1,8 @@
+### New in 2.0.2 - (Released 2023/04/16)
+* Fix Multi Case DUs should set 'additionalProperties' to false (#16)
+* Fix DUs with decimals cause the 'Decimal' type to get redefined (#18)
+* Thank you, @blakeSaucier, for the issues and fixes!
+
 ### New in 2.0.1 - (Released 2022/11/10)
 * Fix generation of F# list type (#12)
 
