@@ -24,6 +24,9 @@ module Reflection =
     let isOption (y: System.Type) =
         y.IsGenericType
         && typedefof<_ option> = y.GetGenericTypeDefinition()
+        
+    let isPrimitive (ty: Type) =
+        ty.IsPrimitive || ty = typeof<String> || ty = typeof<Decimal>
 
 type OptionSchemaProcessor() =
     static let optionTy = typedefof<option<_>>
@@ -83,7 +86,6 @@ type SingleCaseDuSchemaProcessor() =
 
 type MultiCaseDuSchemaProcessor(?casePropertyName) =
     let casePropertyName = defaultArg casePropertyName "kind"
-    let isPrimitive (ty: Type) = ty.IsPrimitive || ty = typeof<String>
 
     member this.Process(context: SchemaProcessorContext) =
         if
@@ -151,7 +153,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                     | _ -> context.Generator.Generate(innerTy)
 
                                 let prop =
-                                    if isPrimitive innerTy then
+                                    if Reflection.isPrimitive innerTy then
                                         JsonSchemaProperty(Type = fieldSchema.Type)
                                     else
                                         if not (fieldSchemaCache.ContainsKey innerTy) then
@@ -168,8 +170,8 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                     | _ -> context.Generator.Generate(field.PropertyType)
 
                                 let prop =
-                                    if isPrimitive field.PropertyType then
-                                        JsonSchemaProperty(Type = fieldSchema.Type)
+                                    if Reflection.isPrimitive field.PropertyType then
+                                        JsonSchemaProperty(Type = fieldSchema.Type, Format = fieldSchema.Format)
                                     else
                                         if not (fieldSchemaCache.ContainsKey field.PropertyType) then
                                             context.Resolver.AppendSchema(

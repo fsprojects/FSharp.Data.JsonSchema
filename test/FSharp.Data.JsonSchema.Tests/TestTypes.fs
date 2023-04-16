@@ -35,6 +35,14 @@ type Nested =
     | Class of TestClass
     | Opt of TestRecord option
 
+type DuWithDecimal =
+    | Nothing
+    | Amount of decimal
+
+type TestDecimal =
+    { Test: DuWithDecimal
+      Total: decimal }
+
 type RecWithOption =
     { Name: string
       Description: string option }

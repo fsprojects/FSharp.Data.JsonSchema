@@ -169,7 +169,8 @@ let tests =
           "enum": ["WithOneField"]
         },
         "item": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -192,7 +193,8 @@ let tests =
           "type": "string"
         },
         "value": {
-          "type": "number"
+          "type": "number",
+          "format": "double"
         }
       }
     }
@@ -290,7 +292,8 @@ let tests =
               ]
             },
             "item": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int32"
             }
           }
         },
@@ -317,7 +320,8 @@ let tests =
               "type": "string"
             },
             "value": {
-              "type": "number"
+              "type": "number",
+              "format": "double"
             }
           }
         }
@@ -613,4 +617,74 @@ let tests =
 """
               let actual = generator typeof<TestList>
               "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected 
+          }
+          test "FSharp decimal generates correct schema" {
+            let expected = """
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDecimal",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "test": {
+      "$ref": "#/definitions/DuWithDecimal"
+    },
+    "total": {
+      "type": "number",
+      "format": "decimal"
+    }
+  },
+  "definitions": {
+    "DuWithDecimal": {
+      "definitions": {
+        "Nothing": {
+          "type": "string",
+          "default": "Nothing",
+          "additionalProperties": false,
+          "x-enumNames": [
+            "Nothing"
+          ],
+          "enum": [
+            "Nothing"
+          ]
+        },
+        "Amount": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "item"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "Amount",
+              "x-enumNames": [
+                "Amount"
+              ],
+              "enum": [
+                "Amount"
+              ]
+            },
+            "item": {
+              "type": "number",
+              "format": "decimal"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DuWithDecimal/definitions/Nothing"
+        },
+        {
+          "$ref": "#/definitions/DuWithDecimal/definitions/Amount"
+        }
+      ]
+    }
+  }
+}
+"""
+            let actual = generator typeof<TestDecimal>
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> equal actual expected
           } ]
