@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Serializer.fs" />
     <Compile Include="JsonSchema.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FSharp.SystemTextJson" Version="0.17.*" />
+    <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23" />
     <PackageReference Include="NJsonSchema" Version="10.*" />
   </ItemGroup>
 </Project>
