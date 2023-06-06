@@ -26,6 +26,7 @@ type Json private () =
                     .WithUnwrapOption()
                     .WithSkippableOptionFields()
                     .WithUnionTagName(Json.DefaultCasePropertyName)
+                    .WithUnionUnwrapFieldlessTags()
             )
         )
 
