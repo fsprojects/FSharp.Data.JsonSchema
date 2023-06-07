@@ -19,11 +19,14 @@ type Json private () =
 
         options.Converters.Add(
             JsonFSharpConverter(
-                JsonUnionEncoding.InternalTag
-                ||| JsonUnionEncoding.NamedFields
-                ||| JsonUnionEncoding.UnwrapFieldlessTags
-                ||| JsonUnionEncoding.UnwrapOption,
-                unionTagName = Json.DefaultCasePropertyName
+                JsonFSharpOptions
+                    .Default()
+                    .WithUnionInternalTag()
+                    .WithUnionNamedFields()
+                    .WithUnwrapOption()
+                    .WithSkippableOptionFields()
+                    .WithUnionTagName(Json.DefaultCasePropertyName)
+                    .WithUnionUnwrapFieldlessTags()
             )
         )
 
