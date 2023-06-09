@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestClass",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Any",
+  "type": [
+    "array",
+    "boolean",
+    "integer",
+    "null",
+    "number",
+    "object",
+    "string"
+  ],
+  "additionalProperties": false
+}

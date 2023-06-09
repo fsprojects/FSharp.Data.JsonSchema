@@ -28,6 +28,13 @@ jobs:
         run: dotnet test -c Release --no-restore --no-build --framework net6.0 --logger "GitHubActions;report-warnings=false"
       - name: Pack
         run: dotnet pack -c Release --no-restore --no-build --include-symbols -o out
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: verify-test-results
+          path: |
+            **/*.received.*
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:

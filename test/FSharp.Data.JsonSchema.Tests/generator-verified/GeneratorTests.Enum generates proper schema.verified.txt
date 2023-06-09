@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestEnum",
+  "type": "string",
+  "description": "",
+  "x-enumNames": [
+    "First",
+    "Second",
+    "Third"
+  ],
+  "enum": [
+    "First",
+    "Second",
+    "Third"
+  ]
+}

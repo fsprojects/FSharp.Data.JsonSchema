@@ -30,6 +30,43 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
+        test "Record missing field does not validate against schema" {
+            let schema = generator (typeof<TestRecord>)
+
+            let json = """{"firstName":"Ryan"}"""
+
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isError actual
+        }
+
+        test "Record missing optional field validates against schema" {
+            let schema = generator (typeof<RecWithOption>)
+
+            let json = """{"name":"Ryan"}"""
+
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
+        }
+
+        test "Record missing nullable field validates against schema" {
+            let schema = generator (typeof<RecWithNullable>)
+
+            let json = """{"need":1}"""
+
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
+        }
+
+        test "Record missing array field validates against schema" {
+            let schema = generator (typeof<TestList>)
+
+            let json = """{"id":1,"name":"Ryan"}"""
+
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
+        }
+
+
         test "None validates against schema for option<_>" {
             let schema = generator(typeof<option<_>>)
             let json = Json.Serialize(None, "tag")

@@ -47,6 +47,10 @@ type RecWithOption =
     { Name: string
       Description: string option }
 
+type RecWithNullable =
+    { Need: int
+      NoNeed: System.Nullable<int> }
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")
