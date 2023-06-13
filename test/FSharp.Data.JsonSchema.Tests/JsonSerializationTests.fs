@@ -4,6 +4,10 @@ open System
 open FSharp.Data
 open Expecto
 
+type RecWithSkippableSeq =
+    { Post : string
+      Likes : System.Text.Json.Serialization.Skippable<string seq> }
+
 [<Tests>]
 let tests =
     testList
@@ -265,4 +269,20 @@ let tests =
               let actual = Json.Deserialize("""{"name":"Ryan"}""")
 
               Expect.equal actual expected "Expected serializer to accept missing, optional field"
+          }
+
+          test "Sequence field required to be explicitly empty" {
+              Expect.throws
+                  (fun () -> Json.Deserialize<PaginatedResult<_>>("""{"page":1,"perPage":10,"total":20}""") |> ignore)
+                  "Expected serializer to enforce sequence field"
+          }
+
+          test "Skippable sequence field not required to be explicitly empty" {
+              let expected =
+                  { RecWithSkippableSeq.Post = "Hello"
+                    Likes = System.Text.Json.Serialization.Skippable.Skip }
+
+              let actual = Json.Deserialize("""{"post":"Hello"}""")
+
+              Expect.equal actual expected "Expected serializer to accept missing, skippable sequence field"
           } ]

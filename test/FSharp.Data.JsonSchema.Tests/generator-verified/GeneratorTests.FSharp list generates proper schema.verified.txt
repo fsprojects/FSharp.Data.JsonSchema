@@ -3,6 +3,11 @@
   "title": "TestList",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "records"
+  ],
   "properties": {
     "id": {
       "type": "integer",
@@ -22,6 +27,10 @@
     "TestRecord": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "firstName",
+        "lastName"
+      ],
       "properties": {
         "firstName": {
           "type": "string"

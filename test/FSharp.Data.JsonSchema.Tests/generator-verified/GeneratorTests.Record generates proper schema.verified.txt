@@ -3,6 +3,10 @@
   "title": "TestRecord",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "firstName",
+    "lastName"
+  ],
   "properties": {
     "firstName": {
       "type": "string"

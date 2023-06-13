@@ -201,11 +201,9 @@ type RecordSchemaProcessor() =
         if
             FSharpType.IsRecord(context.Type)
         then
-            printfn "Type: %s" context.Type.Name
             let schema = context.Schema
 
             for KeyValue(propertyName, property) in schema.Properties do
-                 printfn "Property: %s, Required: %b, Type: %A" propertyName property.IsRequired property.Type
                  if property.Type.HasFlag JsonObjectType.Null |> not then
                     property.IsRequired <- true
 
@@ -269,7 +267,7 @@ type Generator private () =
         settings.SchemaProcessors.Add(OptionSchemaProcessor())
         settings.SchemaProcessors.Add(SingleCaseDuSchemaProcessor())
         settings.SchemaProcessors.Add(MultiCaseDuSchemaProcessor(?casePropertyName = casePropertyName))
-        // settings.SchemaProcessors.Add(RecordSchemaProcessor())
+        settings.SchemaProcessors.Add(RecordSchemaProcessor())
         fun ty -> JsonSchema.FromType(ty, settings)
 
     /// Creates a generator using the specified casePropertyName and generationProviders.

@@ -57,13 +57,13 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
         }
 
-        test "Record missing array field validates against schema" {
+        test "Record missing array field does not validate against schema" {
             let schema = generator (typeof<TestList>)
 
             let json = """{"id":1,"name":"Ryan"}"""
 
             let actual = Validation.validate schema json
-            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isError actual
         }
 
 

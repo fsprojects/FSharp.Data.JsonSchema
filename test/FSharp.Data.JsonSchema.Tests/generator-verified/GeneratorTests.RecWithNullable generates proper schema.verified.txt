@@ -1,20 +1,22 @@
 ﻿{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "RecWithOption",
+  "title": "RecWithNullable",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "name"
+    "need"
   ],
   "properties": {
-    "name": {
-      "type": "string"
+    "need": {
+      "type": "integer",
+      "format": "int32"
     },
-    "description": {
+    "noNeed": {
       "type": [
-        "null",
-        "string"
-      ]
+        "integer",
+        "null"
+      ],
+      "format": "int32"
     }
   }
 }

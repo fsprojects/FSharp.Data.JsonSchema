@@ -3,6 +3,12 @@
   "title": "PaginatedResultOfObject",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "page",
+    "perPage",
+    "total",
+    "results"
+  ],
   "properties": {
     "page": {
       "type": "integer",

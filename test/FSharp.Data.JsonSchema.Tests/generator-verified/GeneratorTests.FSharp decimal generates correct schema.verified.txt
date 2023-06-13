@@ -3,6 +3,10 @@
   "title": "TestDecimal",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "test",
+    "total"
+  ],
   "properties": {
     "test": {
       "$ref": "#/definitions/DuWithDecimal"
