@@ -74,6 +74,15 @@ let tests =
           verify "RecWithOption generates proper schema" {
               return generator typeof<RecWithOption> |> json
           }
+
+          verify "RecWithGenericOption generates proper schema" {
+              return generator typeof<RecWithGenericOption<TestDU>> |> json
+          }
+
+          verify "RecWithArrayOption generates proper schema" {
+              return generator typeof<RecWithArrayOption> |> json
+          }
+
           verify "RecWithNullable generates proper schema" {
               return generator typeof<RecWithNullable> |> json
           }

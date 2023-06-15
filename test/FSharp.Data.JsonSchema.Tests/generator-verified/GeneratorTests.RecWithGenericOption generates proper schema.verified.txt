@@ -1,0 +1,104 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithGenericOptionOfTestDU",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "car"
+  ],
+  "properties": {
+    "car": {
+      "type": "string"
+    },
+    "carType": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/TestDU"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "TestDU": {
+      "definitions": {
+        "Case": {
+          "type": "string",
+          "default": "Case",
+          "additionalProperties": false,
+          "x-enumNames": [
+            "Case"
+          ],
+          "enum": [
+            "Case"
+          ]
+        },
+        "WithOneField": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "item"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "WithOneField",
+              "x-enumNames": [
+                "WithOneField"
+              ],
+              "enum": [
+                "WithOneField"
+              ]
+            },
+            "item": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "WithNamedFields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "name",
+            "value"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "WithNamedFields",
+              "x-enumNames": [
+                "WithNamedFields"
+              ],
+              "enum": [
+                "WithNamedFields"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TestDU/definitions/Case"
+        },
+        {
+          "$ref": "#/definitions/TestDU/definitions/WithOneField"
+        },
+        {
+          "$ref": "#/definitions/TestDU/definitions/WithNamedFields"
+        }
+      ]
+    }
+  }
+}

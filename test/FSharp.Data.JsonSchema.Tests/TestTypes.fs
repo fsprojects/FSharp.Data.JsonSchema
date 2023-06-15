@@ -47,6 +47,13 @@ type RecWithOption =
     { Name: string
       Description: string option }
 
+type RecWithGenericOption<'T> =
+    { Car: string
+      CarType: 'T option }
+
+type RecWithArrayOption =
+    { Hey: string; Many: string array option }
+
 type RecWithNullable =
     { Need: int
       NoNeed: System.Nullable<int> }

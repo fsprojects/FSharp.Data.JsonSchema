@@ -59,11 +59,6 @@ let tests =
   }
 }"""
 
-            """
-
-{"$schema":"http://json-schema.org/draft-04/schema#","title":"outer","type":"object","additionalProperties":false,"required":["outer1"],"properties":{"outer1":{"oneOf":[{"type":"null"},{"$ref":"#/definitions/Inner"}]}},"definitions":{"Inner":{"type":"object","additionalProperties":false,"required":["inner1","inner2"],"properties":{"inner1":{"type":"integer","format":"int32"},"inner2":{"type":"string"}}}}}
-            """
-
             let gen = Generator.CreateMemoized("out")
             let actual = gen (typeof<outerReq>)
             equal actual expected "Expected detailed type definition in definitions."
@@ -76,7 +71,6 @@ let tests =
   "title": "outer",
   "type": "object",
   "additionalProperties": false,
-  "required":["outer1"],
   "properties": {
     "outer1": {
       "oneOf": [

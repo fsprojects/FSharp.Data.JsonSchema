@@ -197,6 +197,11 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
 
 
 type RecordSchemaProcessor() =
+
+    let isNullableProperty(property: JsonSchemaProperty) =
+        property.Type.HasFlag JsonObjectType.Null
+        || property.OneOf |> Seq.exists (fun s -> s.Type.HasFlag JsonObjectType.Null)
+
     member this.Process(context: SchemaProcessorContext) =
         if
             FSharpType.IsRecord(context.Type)
@@ -204,7 +209,7 @@ type RecordSchemaProcessor() =
             let schema = context.Schema
 
             for KeyValue(propertyName, property) in schema.Properties do
-                 if property.Type.HasFlag JsonObjectType.Null |> not then
+                 if (not << isNullableProperty) property then
                     property.IsRequired <- true
 
     interface ISchemaProcessor with
