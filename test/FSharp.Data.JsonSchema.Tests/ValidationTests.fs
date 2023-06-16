@@ -164,4 +164,14 @@ let tests =
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
+
+        test "SingleCaseDU validates against schema and roundtrips" {
+            let schema = generator(typeof<SingleCaseDU>)
+            let expected = SingleCaseDU.OnlyCase {FirstName = "Ryan"; LastName = "Riley"}
+            let json = Json.Serialize(expected, "tag")
+            do Expect.wantOk (Validation.validate schema json) "Did not validate"
+            let actual = Json.Deserialize<SingleCaseDU>( json, "tag")
+            Expect.equal actual expected "Did not roundtrip"
+        }
+
     ]

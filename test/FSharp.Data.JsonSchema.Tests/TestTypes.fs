@@ -58,12 +58,19 @@ type RecWithNullable =
     { Need: int
       NoNeed: System.Nullable<int> }
 
-module Util =
-    let stripWhitespace text =
-        System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")
+type RecWithSkippableSeq =
+    { Post: string
+      Likes: System.Text.Json.Serialization.Skippable<string seq> }
 
 type PaginatedResult<'T> =
     { Page: int
       PerPage: int
       Total: int
       Results: 'T seq }
+
+type SingleCaseDU =
+    | OnlyCase of onlyCase: TestRecord
+
+module Util =
+    let stripWhitespace text =
+        System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

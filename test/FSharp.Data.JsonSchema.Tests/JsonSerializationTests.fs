@@ -4,10 +4,6 @@ open System
 open FSharp.Data
 open Expecto
 
-type RecWithSkippableSeq =
-    { Post : string
-      Likes : System.Text.Json.Serialization.Skippable<string seq> }
-
 [<Tests>]
 let tests =
     testList

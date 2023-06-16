@@ -14,6 +14,7 @@ module private Defaults =
           .WithUnwrapOption()
           .WithSkippableOptionFields()
           .WithUnionUnwrapFieldlessTags()
+          .WithUnionUnwrapSingleCaseUnions(false)
 
     let mkOptions unionTagName =
 
