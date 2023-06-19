@@ -266,7 +266,8 @@ type Generator private () =
                 SerializerOptions = FSharp.Data.Json.DefaultOptions,
                 DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull,
                 ReflectionService = ReflectionService(),
-                SchemaNameGenerator = SchemaNameGenerator()
+                SchemaNameGenerator = SchemaNameGenerator(),
+                UseXmlDocumentation = true
             )
 
         settings.SchemaProcessors.Add(OptionSchemaProcessor())
