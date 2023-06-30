@@ -33,11 +33,11 @@ type OptionSchemaProcessor() =
 
     member this.Process(context: SchemaProcessorContext) =
         if
-            context.Type.IsGenericType
-            && optionTy.Equals(context.Type.GetGenericTypeDefinition())
+            context.ContextualType.Type.IsGenericType
+            && optionTy.Equals(context.ContextualType.Type.GetGenericTypeDefinition())
         then
             let schema = context.Schema
-            let cases = FSharpType.GetUnionCases(context.Type)
+            let cases = FSharpType.GetUnionCases(context.ContextualType.Type)
 
             let schemaType =
                 [| for case in cases do
@@ -70,12 +70,12 @@ type SingleCaseDuSchemaProcessor() =
 
     member this.Process(context: SchemaProcessorContext) =
         if
-            FSharpType.IsUnion(context.Type)
-            && Reflection.allCasesEmpty context.Type
+            FSharpType.IsUnion(context.ContextualType.Type)
+            && Reflection.allCasesEmpty context.ContextualType.Type
         then
             let schema = context.Schema
             schema.Type <- JsonObjectType.String
-            let cases = FSharpType.GetUnionCases(context.Type)
+            let cases = FSharpType.GetUnionCases(context.ContextualType.Type)
 
             for case in cases do
                 schema.Enumeration.Add(case.Name)
@@ -89,12 +89,12 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
 
     member this.Process(context: SchemaProcessorContext) =
         if
-            FSharpType.IsUnion(context.Type)
-            && not (Reflection.allCasesEmpty context.Type)
-            && not (Reflection.isList context.Type)
-            && not (Reflection.isOption context.Type)
+            FSharpType.IsUnion(context.ContextualType.Type)
+            && not (Reflection.allCasesEmpty context.ContextualType.Type)
+            && not (Reflection.isList context.ContextualType.Type)
+            && not (Reflection.isOption context.ContextualType.Type)
         then
-            let cases = FSharpType.GetUnionCases(context.Type)
+            let cases = FSharpType.GetUnionCases(context.ContextualType.Type)
 
             // Set the core schema definition.
             let schema = context.Schema
@@ -204,7 +204,7 @@ type RecordSchemaProcessor() =
 
     member this.Process(context: SchemaProcessorContext) =
         if
-            FSharpType.IsRecord(context.Type)
+            FSharpType.IsRecord(context.ContextualType.Type)
         then
             let schema = context.Schema
 
