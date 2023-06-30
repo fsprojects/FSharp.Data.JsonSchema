@@ -71,6 +71,13 @@ type PaginatedResult<'T> =
 type SingleCaseDU =
     | OnlyCase of onlyCase: TestRecord
 
+open System.ComponentModel.DataAnnotations
+
+type RecordWithAnnotations =
+    { [<Required>] RegEx: string
+      [<MaxLength(10)>] MaxLength : string
+      [<Range(0, 100)>] Range: int }
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

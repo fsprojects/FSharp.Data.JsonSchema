@@ -97,4 +97,8 @@ let tests =
 
           verify "FSharp decimal generates correct schema" {
             return generator typeof<TestDecimal> |> json
-          } ]
+          }
+
+          verify "Record with annotations generates proper schema" {
+            return generator typeof<RecordWithAnnotations> |> json
+          }]
