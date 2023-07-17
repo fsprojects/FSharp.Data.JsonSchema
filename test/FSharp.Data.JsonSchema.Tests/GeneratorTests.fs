@@ -101,4 +101,8 @@ let tests =
 
           verify "Record with annotations generates proper schema" {
             return generator typeof<RecordWithAnnotations> |> json
+          }
+
+          verify "Interdependent DUs generate proper schema" {
+            return generator typeof<Chicken> |> json
           }]

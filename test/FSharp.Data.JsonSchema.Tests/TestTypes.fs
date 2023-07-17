@@ -78,6 +78,13 @@ type RecordWithAnnotations =
       [<MaxLength(10)>] MaxLength : string
       [<Range(0, 100)>] Range: int }
 
+type Chicken =
+    | Have of Egg
+    | DontHaveEgg
+and Egg =
+    | Have of Chicken
+    | DontHaveChicken
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")
