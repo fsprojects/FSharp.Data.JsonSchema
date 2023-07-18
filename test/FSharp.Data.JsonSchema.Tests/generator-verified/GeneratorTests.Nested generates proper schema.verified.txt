@@ -3,7 +3,6 @@
   "title": "Nested",
   "definitions": {
     "TestRecord": {
-      "title": "TestRecord",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -43,7 +42,6 @@
       }
     },
     "TestDU": {
-      "title": "TestDU",
       "definitions": {
         "Case": {
           "type": "string",
@@ -145,7 +143,6 @@
       }
     },
     "TestSingleDU": {
-      "title": "TestSingleDU",
       "type": "string",
       "additionalProperties": false,
       "x-enumNames": [
@@ -183,7 +180,6 @@
       }
     },
     "TestEnum": {
-      "title": "TestEnum",
       "type": "string",
       "description": "",
       "x-enumNames": [
@@ -221,7 +217,6 @@
       }
     },
     "TestClass": {
-      "title": "TestClass",
       "type": "object",
       "additionalProperties": false,
       "properties": {

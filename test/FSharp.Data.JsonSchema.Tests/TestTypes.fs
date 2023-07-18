@@ -85,6 +85,11 @@ and Egg =
     | Have of Chicken
     | DontHaveChicken
 
+type Even =
+    | Even of Odd option
+and Odd =
+    | Odd of Even option
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

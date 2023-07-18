@@ -26,6 +26,7 @@ type VerifyBuilder(name,focusState) =
     member __.Return<'T>(v:'T) = Verifier.Verify(makeValidFilePath name, v,settings= verifySettings).Wait()
 
 let verify name = VerifyBuilder(name,FocusState.Normal)
+let fverify name = VerifyBuilder(name,FocusState.Focused)
 
 let json ( schema: NJsonSchema.JsonSchema ) = schema.ToJson()
 
@@ -105,4 +106,8 @@ let tests =
 
           verify "Interdependent DUs generate proper schema" {
             return generator typeof<Chicken> |> json
+          }
+
+          verify "Interdependent DUs with optional fields generate proper schema" {
+            return generator typeof<Even> |> json
           }]
