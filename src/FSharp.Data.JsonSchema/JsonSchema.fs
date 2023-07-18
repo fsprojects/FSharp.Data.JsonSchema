@@ -104,8 +104,6 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
             schema.IsAbstract <- false
             schema.AllowAdditionalProperties <- true
 
-            let fieldSchemaCache = Dictionary<Type, JsonSchema>()
-
             // Add schemas for each case.
             for case in cases do
                 let fields = case.GetFields()
@@ -149,34 +147,22 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                 let innerTy =
                                     field.PropertyType.GetGenericArguments().[0]
 
-                                let fieldSchema, wasCached =
-                                    match fieldSchemaCache.TryGetValue innerTy with
-                                    | true, fs -> fs, true
-                                    | _ -> context.Generator.Generate(innerTy, context.Resolver), false
+                                let fieldSchema = context.Generator.Generate(innerTy, context.Resolver)
 
                                 let prop =
                                     if Reflection.isPrimitive innerTy then
                                         JsonSchemaProperty(Type = fieldSchema.Type)
                                     else
-                                        if not wasCached then
-                                            fieldSchemaCache.Add(innerTy, fieldSchema)
-
                                         JsonSchemaProperty(Reference = fieldSchema)
 
                                 s.Properties.Add(camelCaseFieldName, prop)
                             else
-                                let fieldSchema, wasCached =
-                                    match fieldSchemaCache.TryGetValue field.PropertyType with
-                                    | true, fs -> fs, true
-                                    | _ -> context.Generator.Generate(field.PropertyType, context.Resolver), false
+                                let fieldSchema = context.Generator.Generate(field.PropertyType, context.Resolver)
 
                                 let prop =
                                     if Reflection.isPrimitive field.PropertyType then
                                         JsonSchemaProperty(Type = fieldSchema.Type, Format = fieldSchema.Format)
                                     else
-                                        if not wasCached then
-                                            fieldSchemaCache.Add(field.PropertyType, fieldSchema)
-
                                         JsonSchemaProperty(Reference = fieldSchema)
 
                                 s.Properties.Add(camelCaseFieldName, prop)
