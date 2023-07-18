@@ -47,7 +47,7 @@ type OptionSchemaProcessor() =
                            let field = case.GetFields() |> Array.head
 
                            let schema =
-                               context.Generator.Generate(field.PropertyType)
+                               context.Generator.Generate(field.PropertyType, context.Resolver)
 
                            match schema.Type with
                            | JsonObjectType.None ->
