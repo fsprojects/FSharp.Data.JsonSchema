@@ -146,31 +146,39 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                     string (Char.ToLowerInvariant field.Name.[0])
                                     + field.Name.Substring(1)
 
+                            let generate ( t : Type) =
+                                    let isIntegerEnum = Reflection.isIntegerEnum t
+                                    if context.Resolver.HasSchema(t, isIntegerEnum) then
+                                        context.Resolver.GetSchema(t, isIntegerEnum)
+                                    else
+                                        let s = context.Generator.Generate(t, context.Resolver)
+                                        if (not << Reflection.isPrimitive ) t
+                                             && not (context.Resolver.HasSchema(t, isIntegerEnum))
+                                         then
+                                              context.Resolver.AddSchema(t, isIntegerEnum, s)
+                                        s
+
                             if field.PropertyType.IsGenericType
                                && field.PropertyType.GetGenericTypeDefinition() = typedefof<option<_>> then
                                 let innerTy =
                                     field.PropertyType.GetGenericArguments().[0]
 
-                                let fieldSchema = context.Generator.Generate(innerTy, context.Resolver)
+                                let fieldSchema = generate innerTy
 
                                 let prop =
                                     if Reflection.isPrimitive innerTy then
                                         JsonSchemaProperty(Type = fieldSchema.Type)
                                     else
-                                        if not <| context.Resolver.HasSchema(innerTy, Reflection.isIntegerEnum innerTy) then
-                                            context.Resolver.AddSchema(innerTy, Reflection.isIntegerEnum innerTy,fieldSchema)
                                         JsonSchemaProperty(Reference = fieldSchema)
 
                                 s.Properties.Add(camelCaseFieldName, prop)
                             else
-                                let fieldSchema = context.Generator.Generate(field.PropertyType, context.Resolver)
+                                let fieldSchema = generate field.PropertyType
 
                                 let prop =
                                     if Reflection.isPrimitive field.PropertyType then
                                         JsonSchemaProperty(Type = fieldSchema.Type, Format = fieldSchema.Format)
                                     else
-                                        if not <| context.Resolver.HasSchema(field.PropertyType, Reflection.isIntegerEnum field.PropertyType) then
-                                            context.Resolver.AddSchema(field.PropertyType, Reflection.isIntegerEnum field.PropertyType, fieldSchema)
                                         JsonSchemaProperty(Reference = fieldSchema)
 
                                 s.Properties.Add(camelCaseFieldName, prop)

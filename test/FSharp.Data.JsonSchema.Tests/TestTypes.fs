@@ -93,7 +93,9 @@ and Odd =
 
 type RecWithRecArray = { V : TestRecord array }
 
-type DUWithRecArray = Records of TestRecord array
+type DUWithRecArray = AA | Records of TestRecord array
+
+type DUWithDUArray = Dus of TestDU array
 
 module Util =
     let stripWhitespace text =

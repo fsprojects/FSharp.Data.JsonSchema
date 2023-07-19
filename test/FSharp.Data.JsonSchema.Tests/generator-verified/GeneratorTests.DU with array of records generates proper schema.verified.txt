@@ -2,6 +2,17 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "DUWithRecArray",
   "definitions": {
+    "AA": {
+      "type": "string",
+      "default": "AA",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "AA"
+      ],
+      "enum": [
+        "AA"
+      ]
+    },
     "TestRecord": {
       "type": "object",
       "additionalProperties": false,
@@ -49,6 +60,9 @@
     }
   },
   "anyOf": [
+    {
+      "$ref": "#/definitions/AA"
+    },
     {
       "$ref": "#/definitions/Records"
     }

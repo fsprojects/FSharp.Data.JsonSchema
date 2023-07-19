@@ -112,6 +112,10 @@ let tests =
             return generator typeof<DUWithRecArray> |> json
           }
 
+          verify "DU with array of DUs generates proper schema" {
+            return generator typeof<DUWithDUArray> |> json
+          }
+
           verify "Record with array of records generates proper schema" {
             return generator typeof<RecWithRecArray> |> json
           }
