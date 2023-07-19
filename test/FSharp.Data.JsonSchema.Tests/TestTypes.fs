@@ -90,6 +90,11 @@ type Even =
 and Odd =
     | Odd of Even option
 
+
+type RecWithRecArray = { V : TestRecord array }
+
+type DUWithRecArray = Records of TestRecord array
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

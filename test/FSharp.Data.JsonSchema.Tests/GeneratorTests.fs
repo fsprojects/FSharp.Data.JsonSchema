@@ -108,6 +108,14 @@ let tests =
             return generator typeof<Chicken> |> json
           }
 
+          verify "DU with array of records generates proper schema" {
+            return generator typeof<DUWithRecArray> |> json
+          }
+
+          verify "Record with array of records generates proper schema" {
+            return generator typeof<RecWithRecArray> |> json
+          }
+
           verify "Interdependent DUs with optional fields generate proper schema" {
             return generator typeof<Even> |> json
           }]
