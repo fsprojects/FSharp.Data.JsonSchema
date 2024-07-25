@@ -66,4 +66,4 @@ jobs:
           API_KEY: ${{ secrets.NUGET_API_KEY }}
           SOURCE: "https://api.nuget.org/v3/index.json"
         run: |
-          dotnet nuget push ./out/FSharp.Data.JsonSchema.${RELEASE_VERSION:1}.nupkg --skip-duplicate --no-symbols true --source $SOURCE --api-key $API_KEY
+          dotnet nuget push ./out/*FSharp.Data.JsonSchema.${RELEASE_VERSION:1}.nupkg --skip-duplicate --no-symbols true --source $SOURCE --api-key $API_KEY
