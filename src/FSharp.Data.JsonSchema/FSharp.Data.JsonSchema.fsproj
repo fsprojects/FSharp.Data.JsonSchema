@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0;net8.0</TargetFrameworks>
-    <PackageId Condition="$(GITHUB_REPOSITORY_OWNER) == 'fsprojects'">FSharp.Data.JsonSchema</PackageId>
-    <PackageId Condition="$(GITHUB_REPOSITORY_OWNER) != 'fsprojects'">$(GITHUB_REPOSITORY_OWNER).FSharp.Data.JsonSchema</PackageId>
+    <PackageId Condition="$(GITHUB_REPOSITORY_OWNER) != 'fsprojects' and $(GITHUB_REPOSITORY_OWNER) != ''">$(GITHUB_REPOSITORY_OWNER).FSharp.Data.JsonSchema</PackageId>
+    <Version>$(Version)</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Serializer.fs" />

@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <VersionPrefix>2.1.2</VersionPrefix>
+    <Version>$(Version)</Version>
     <Owners>Ryan Riley</Owners>
     <Authors>Ryan Riley</Authors>
     <PackageProjectUrl>https://github.com/panesofglass/FSharp.Data.JsonSchema</PackageProjectUrl>
@@ -16,10 +17,10 @@
 
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
- 
+
     <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-  
+
     <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
