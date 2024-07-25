@@ -23,13 +23,23 @@ module Reflection =
     let isOption (y: System.Type) =
         y.IsGenericType
         && typedefof<_ option> = y.GetGenericTypeDefinition()
-        
+
     let isPrimitive (ty: Type) =
         ty.IsPrimitive || ty = typeof<String> || ty = typeof<Decimal>
 
     let isIntegerEnum (ty: Type) =
         ty.IsEnum && ty.GetEnumUnderlyingType() = typeof<int>
 
+module Dictionary =
+    let getUniqueKey (dict: IDictionary<string, 'T>) (key: string) =
+        let mutable i = 0
+        let mutable newKey = key
+
+        while dict.ContainsKey(newKey) do
+            i <- i + 1
+            newKey <- sprintf "%s%d" key i
+
+        newKey
 
 type OptionSchemaProcessor() =
     static let optionTy = typedefof<option<_>>
@@ -186,7 +196,9 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                         s
 
                 // Attach each case definition.
-                schema.Definitions.Add(case.Name, caseSchema)
+                let name = Dictionary.getUniqueKey schema.Definitions case.Name
+                // printfn "Adding case %s to dict: %A" name schema.Definitions
+                schema.Definitions.Add(name, caseSchema)
                 // Add each schema to the anyOf collection.
                 schema.AnyOf.Add(JsonSchema(Reference = caseSchema))
 
@@ -215,7 +227,7 @@ type RecordSchemaProcessor() =
         member this.Process(context) = this.Process(context)
 
 
-        
+
 
 [<Sealed>]
 type internal SchemaNameGenerator() =
