@@ -38,6 +38,36 @@ let tests =
               Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
           }
 
+          test "ValueOption.None should serialize as null" {
+            let expected = "null"
+            let actual = Json.Serialize(ValueNone, "tag")
+            Expect.equal actual expected "Expected serializer to convert ValueNone null"
+          }
+
+          test "ValueOption.ValueNone should roundtrip" {
+              let expected = ValueNone
+
+              let actual =
+                  Json.Deserialize(Json.Serialize(expected, "tag"), "tag")
+
+              Expect.equal actual expected "Expected serializer to convert ValueNone to null"
+          }
+
+          test "ValueOption.ValueSome(1) should serialize as 1" {
+              let expected = "1"
+              let actual = Json.Serialize(ValueSome 1, "tag")
+              Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
+          }
+
+          test "ValueOption.ValueSome(1) should roundtrip" {
+              let expected = ValueSome 1
+
+              let actual =
+                  Json.Deserialize(Json.Serialize(expected, "tag"), "tag")
+
+              Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
+          }
+
           test "tuple should serialize as array" {
               let expected = """["2021-03-01T00:00:00",10.01]"""
 
