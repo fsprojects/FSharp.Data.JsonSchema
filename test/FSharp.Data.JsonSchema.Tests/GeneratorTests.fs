@@ -25,8 +25,9 @@ type VerifyBuilder(name,focusState) =
 
     member __.Return<'T>(v:'T) = Verifier.Verify(makeValidFilePath name, v,settings= verifySettings).Wait()
 
-let verify name = VerifyBuilder(name,FocusState.Normal)
-let fverify name = VerifyBuilder(name,FocusState.Focused)
+let verify name = VerifyBuilder(name,Normal)
+let fverify name = VerifyBuilder(name,Focused)
+let pverify name = VerifyBuilder(name,Pending)
 
 let json ( schema: NJsonSchema.JsonSchema ) = schema.ToJson()
 
@@ -56,8 +57,16 @@ let tests =
               return generator typeof<option<_>> |> json
           }
 
+          verify "voption<'a> generates proper schema" {
+              return generator typeof<voption<_>> |> json
+          }
+
           verify "option<int> generates proper schema" {
               return generator typeof<option<int>> |> json
+          }
+
+          verify "voption<int> generates proper schema" {
+              return generator typeof<voption<int>> |> json
           }
 
           verify "TestSingleDU generates proper schema" {
@@ -76,6 +85,10 @@ let tests =
               return generator typeof<RecWithOption> |> json
           }
 
+          verify "RecWithValueOption generates proper schema" {
+              return generator typeof<RecWithValueOption> |> json
+          }
+
           verify "RecWithGenericOption generates proper schema" {
               return generator typeof<RecWithGenericOption<TestDU>> |> json
           }
@@ -91,7 +104,7 @@ let tests =
           verify "PaginatedResult<'T> generates proper schema" {
               return generator typeof<PaginatedResult<_>> |> json
           }
-          
+
           verify "FSharp list generates proper schema" {
               return generator typeof<TestList> |> json
           }

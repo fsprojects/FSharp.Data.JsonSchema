@@ -48,6 +48,15 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
         }
 
+        test "Record missing value optional field validates against schema" {
+            let schema = generator (typeof<RecWithValueOption>)
+
+            let json = """{"hey":"Ryan"}"""
+
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.isOk actual
+        }
+
         test "Record missing nullable field validates against schema" {
             let schema = generator (typeof<RecWithNullable>)
 
@@ -74,6 +83,13 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
+        test "ValueNone validates against schema for voption<_>" {
+            let schema = generator(typeof<voption<_>>)
+            let json = Json.Serialize(ValueNone, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
         test "None validates against schema for option<string>" {
             let schema = generator(typeof<option<string>>)
             let json = Json.Serialize(None, "tag")
@@ -88,9 +104,23 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
+        test "ValueNone validates against schema for voption<int>" {
+            let schema = generator(typeof<voption<int>>)
+            let json = Json.Serialize(ValueNone, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
         test "None validates against schema for option<TestRecord>" {
             let schema = generator(typeof<option<TestRecord>>)
             let json = Json.Serialize(None, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "ValueNone validates against schema for voption<TestStructRecord>" {
+            let schema = generator(typeof<voption<TestStructRecord>>)
+            let json = Json.Serialize(ValueNone, "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
@@ -102,8 +132,15 @@ let tests =
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }
 
+        test "ValueSome \"test\" validates against schema for voption<_>" {
+            let schema = generator(typeof<voption<_>>)
+            let json = Json.Serialize(ValueSome "test", "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
         test "Some \"test\" validates against schema for option<string>" {
-            let schema = generator(typeof<option<_>>)
+            let schema = generator(typeof<option<string>>)
             let json = Json.Serialize(Some "test", "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
@@ -119,6 +156,13 @@ let tests =
         test "Some 1 validates against schema for option<int>" {
             let schema = generator(typeof<option<int>>)
             let json = Json.Serialize(Some 1, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "ValueSome 1 validates against schema for voption<int>" {
+            let schema = generator(typeof<voption<int>>)
+            let json = Json.Serialize(ValueSome 1, "tag")
             let actual = Validation.validate schema json
             "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
         }

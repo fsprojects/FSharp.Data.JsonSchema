@@ -22,7 +22,12 @@ module Reflection =
 
     let isOption (y: System.Type) =
         y.IsGenericType
-        && typedefof<_ option> = y.GetGenericTypeDefinition()
+        &&
+        let def = y.GetGenericTypeDefinition()
+        def = typedefof<_ option> || def = typedefof<voption<_>>
+
+    let isObjOption (y: System.Type) =
+        y = typedefof<_ option> || y = typedefof<voption<_>>
 
     let isPrimitive (ty: Type) =
         ty.IsPrimitive || ty = typeof<String> || ty = typeof<Decimal>
@@ -42,13 +47,10 @@ module Dictionary =
         newKey
 
 type OptionSchemaProcessor() =
-    static let optionTy = typedefof<option<_>>
-
     member this.Process(context: SchemaProcessorContext) =
         if
             isNull context.Schema.Reference
-            && context.ContextualType.Type.IsGenericType
-            && optionTy.Equals(context.ContextualType.Type.GetGenericTypeDefinition())
+            && Reflection.isOption context.ContextualType.Type
         then
             let schema = context.Schema
             let cases = FSharpType.GetUnionCases(context.ContextualType.Type)
@@ -56,7 +58,7 @@ type OptionSchemaProcessor() =
             let schemaType =
                 [| for case in cases do
                        match case.Name with
-                       | "None" -> yield JsonObjectType.Null
+                       | "None" | "ValueNone" -> yield JsonObjectType.Null
                        | _ ->
                            let field = case.GetFields() |> Array.head
 
@@ -168,8 +170,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                               context.Resolver.AddSchema(t, isIntegerEnum, s)
                                         s
 
-                            if field.PropertyType.IsGenericType
-                               && field.PropertyType.GetGenericTypeDefinition() = typedefof<option<_>> then
+                            if Reflection.isOption field.PropertyType then
                                 let innerTy =
                                     field.PropertyType.GetGenericArguments().[0]
 
@@ -236,10 +237,9 @@ type internal SchemaNameGenerator() =
     override this.Generate(ty: Type) =
         let cachedType = ty.ToCachedType()
 
-        if cachedType.Type = typeof<option<obj>> then
+        if Reflection.isObjOption cachedType.Type then
             "Any"
-        elif cachedType.Type.IsGenericType
-           && cachedType.Type.GetGenericTypeDefinition() = typedefof<option<_>> then
+        elif Reflection.isOption cachedType.Type then
             this.Generate(cachedType.GenericArguments.[0].OriginalType)
         else
             base.Generate(ty)
@@ -249,10 +249,9 @@ type internal ReflectionService() =
     inherit DefaultReflectionService()
 
     override this.GetDescription(contextualType, defaultReferenceTypeNullHandling, settings) =
-        if contextualType.Type = typeof<option<obj>> then
+        if Reflection.isObjOption contextualType.Type then
             JsonTypeDescription.Create(contextualType, JsonObjectType.Object, true, null)
-        elif contextualType.Type.IsConstructedGenericType
-           && contextualType.Type.GetGenericTypeDefinition() = typedefof<option<_>> then
+        elif Reflection.isOption contextualType.Type then
             let typeDescription =
                 this.GetDescription(
                     contextualType.OriginalGenericArguments.[0],

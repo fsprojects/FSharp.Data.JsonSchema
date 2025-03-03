@@ -6,6 +6,9 @@ type TestClass() =
 
 type TestRecord = { FirstName: string; LastName: string }
 
+[<Struct>]
+type TestStructRecord = { A: int; B: float }
+
 type TestList =
     { Id: int
       Name: string
@@ -47,9 +50,17 @@ type RecWithOption =
     { Name: string
       Description: string option }
 
+type RecWithValueOption =
+    { Count: int voption
+      Hey: string }
+
 type RecWithGenericOption<'T> =
     { Car: string
       CarType: 'T option }
+
+type RecWithGenericValueOption<'T> =
+    { Car: string
+      CarType: 'T voption }
 
 type RecWithArrayOption =
     { Hey: string; Many: string array option }
