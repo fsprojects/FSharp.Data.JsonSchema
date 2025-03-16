@@ -1,0 +1,94 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Chicken",
+  "definitions": {
+    "Egg": {
+      "definitions": {
+        "Have": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "item"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "Have",
+              "x-enumNames": [
+                "Have"
+              ],
+              "enum": [
+                "Have"
+              ]
+            },
+            "item": {
+              "$ref": "#"
+            }
+          }
+        },
+        "DontHaveChicken": {
+          "type": "string",
+          "default": "DontHaveChicken",
+          "additionalProperties": false,
+          "x-enumNames": [
+            "DontHaveChicken"
+          ],
+          "enum": [
+            "DontHaveChicken"
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Egg/definitions/Have"
+        },
+        {
+          "$ref": "#/definitions/Egg/definitions/DontHaveChicken"
+        }
+      ]
+    },
+    "Have": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Have",
+          "x-enumNames": [
+            "Have"
+          ],
+          "enum": [
+            "Have"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/Egg"
+        }
+      }
+    },
+    "DontHaveEgg": {
+      "type": "string",
+      "default": "DontHaveEgg",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "DontHaveEgg"
+      ],
+      "enum": [
+        "DontHaveEgg"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/Have"
+    },
+    {
+      "$ref": "#/definitions/DontHaveEgg"
+    }
+  ]
+}

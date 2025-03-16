@@ -3,6 +3,35 @@ namespace FSharp.Data
 open System.Text.Json
 open System.Text.Json.Serialization
 
+
+[<AutoOpen>]
+module private Defaults =
+    let private jsonFSharpConverterOptions =
+        JsonFSharpOptions
+          .Default()
+          .WithUnionInternalTag()
+          .WithUnionNamedFields()
+          .WithUnwrapOption()
+          .WithSkippableOptionFields()
+          .WithUnionUnwrapFieldlessTags()
+          .WithUnionUnwrapSingleCaseUnions(false)
+
+    let mkOptions unionTagName =
+
+        let options = JsonSerializerOptions(PropertyNamingPolicy = JsonNamingPolicy.CamelCase)
+
+        options.Converters.Add(JsonStringEnumConverter())
+
+        options.Converters.Add(
+            JsonFSharpConverter(
+                jsonFSharpConverterOptions
+                  .WithUnionTagName(unionTagName)
+            )
+        )
+
+        options
+                  
+
 [<AbstractClass; Sealed>]
 type Json private () =
 
@@ -11,32 +40,7 @@ type Json private () =
 
     static member internal DefaultCasePropertyName = "kind"
 
-    static member DefaultOptions =
-        let options =
-            JsonSerializerOptions(PropertyNamingPolicy = JsonNamingPolicy.CamelCase)
-
-        options.Converters.Add(JsonStringEnumConverter())
-
-        options.Converters.Add(
-            JsonFSharpConverter(
-                JsonUnionEncoding.InternalTag
-                ||| JsonUnionEncoding.NamedFields
-                ||| JsonUnionEncoding.UnwrapFieldlessTags
-                ||| JsonUnionEncoding.UnwrapOption,
-                unionTagName = Json.DefaultCasePropertyName
-            )
-        )
-
-        options
-    (*
-        JsonSerializerOptions(
-            Converters=[|Converters.StringEnumConverter()
-                         OptionConverter()
-                         SingleCaseDuConverter()
-                         MultiCaseDuConverter()|],
-            ContractResolver=Serialization.CamelCasePropertyNamesContractResolver(),
-            NullValueHandling=NullValueHandling.Ignore)
-*)
+    static member DefaultOptions = mkOptions Json.DefaultCasePropertyName
 
     static member Serialize(value) =
         JsonSerializer.Serialize(value, Json.DefaultOptions)
@@ -45,22 +49,7 @@ type Json private () =
         let options =
             optionsCache.GetOrAdd(
                 casePropertyName,
-                let options =
-                    JsonSerializerOptions(IgnoreNullValues = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase)
-
-                options.Converters.Add(JsonStringEnumConverter())
-
-                options.Converters.Add(
-                    JsonFSharpConverter(
-                        JsonUnionEncoding.InternalTag
-                        ||| JsonUnionEncoding.NamedFields
-                        ||| JsonUnionEncoding.UnwrapFieldlessTags
-                        ||| JsonUnionEncoding.UnwrapOption,
-                        unionTagName = casePropertyName
-                    )
-                )
-
-                options
+                fun key -> mkOptions casePropertyName
             )
 
         JsonSerializer.Serialize(value, options)
@@ -78,26 +67,7 @@ type Json private () =
         let options =
             optionsCache.GetOrAdd(
                 casePropertyName,
-                fun key ->
-                    let options =
-                        JsonSerializerOptions(
-                            IgnoreNullValues = true,
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                        )
-
-                    options.Converters.Add(JsonStringEnumConverter())
-
-                    options.Converters.Add(
-                        JsonFSharpConverter(
-                            JsonUnionEncoding.InternalTag
-                            ||| JsonUnionEncoding.NamedFields
-                            ||| JsonUnionEncoding.UnwrapFieldlessTags
-                            ||| JsonUnionEncoding.UnwrapOption,
-                            unionTagName = casePropertyName
-                        )
-                    )
-
-                    options
+                fun key -> mkOptions casePropertyName
             )
 
         JsonSerializer.Deserialize<'T>(json, options = options)
@@ -106,26 +76,7 @@ type Json private () =
         let options =
             optionsCache.GetOrAdd(
                 casePropertyName,
-                fun key ->
-                    let options =
-                        JsonSerializerOptions(
-                            IgnoreNullValues = true,
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                        )
-
-                    options.Converters.Add(JsonStringEnumConverter())
-
-                    options.Converters.Add(
-                        JsonFSharpConverter(
-                            JsonUnionEncoding.InternalTag
-                            ||| JsonUnionEncoding.NamedFields
-                            ||| JsonUnionEncoding.UnwrapFieldlessTags
-                            ||| JsonUnionEncoding.UnwrapOption,
-                            unionTagName = casePropertyName
-                        )
-                    )
-
-                    options
+                fun key -> mkOptions casePropertyName
             )
 
         JsonSerializer.Deserialize<'T>(json, options = options)
@@ -134,26 +85,7 @@ type Json private () =
         let options =
             optionsCache.GetOrAdd(
                 casePropertyName,
-                fun key ->
-                    let options =
-                        JsonSerializerOptions(
-                            IgnoreNullValues = true,
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                        )
-
-                    options.Converters.Add(JsonStringEnumConverter())
-
-                    options.Converters.Add(
-                        JsonFSharpConverter(
-                            JsonUnionEncoding.InternalTag
-                            ||| JsonUnionEncoding.NamedFields
-                            ||| JsonUnionEncoding.UnwrapFieldlessTags
-                            ||| JsonUnionEncoding.UnwrapOption,
-                            unionTagName = casePropertyName
-                        )
-                    )
-
-                    options
+                fun key -> mkOptions casePropertyName
             )
 
         JsonSerializer.Deserialize<'T>(&json, options = options)

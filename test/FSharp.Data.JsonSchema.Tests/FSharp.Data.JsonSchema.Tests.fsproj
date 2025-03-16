@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <GenerateProgramFile>false</GenerateProgramFile>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -20,6 +21,9 @@
     <PackageReference Include="Expecto" Version="9.0.2" />
     <PackageReference Include="GitHubActionsTestLogger" Version="1.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Include="Verify.ClipboardAccept" Version="20.3.2" />
+    <PackageReference Include="Verify.DiffPlex" Version="2.2.1" />
+    <PackageReference Include="Verify.Expecto" Version="20.3.2" />
     <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.9.2" />
   </ItemGroup>
 </Project>

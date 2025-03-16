@@ -1,0 +1,27 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecordWithAnnotations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "regEx",
+    "maxLength",
+    "range"
+  ],
+  "properties": {
+    "regEx": {
+      "type": "string",
+      "minLength": 1
+    },
+    "maxLength": {
+      "type": "string",
+      "maxLength": 10
+    },
+    "range": {
+      "type": "integer",
+      "format": "int32",
+      "maximum": 100.0,
+      "minimum": 0.0
+    }
+  }
+}

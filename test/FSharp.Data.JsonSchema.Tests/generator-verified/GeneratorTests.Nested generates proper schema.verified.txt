@@ -1,0 +1,297 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Nested",
+  "definitions": {
+    "TestRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+    "Rec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Rec",
+          "x-enumNames": [
+            "Rec"
+          ],
+          "enum": [
+            "Rec"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestRecord"
+        }
+      }
+    },
+    "TestDU": {
+      "definitions": {
+        "Case": {
+          "type": "string",
+          "default": "Case",
+          "additionalProperties": false,
+          "x-enumNames": [
+            "Case"
+          ],
+          "enum": [
+            "Case"
+          ]
+        },
+        "WithOneField": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "item"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "WithOneField",
+              "x-enumNames": [
+                "WithOneField"
+              ],
+              "enum": [
+                "WithOneField"
+              ]
+            },
+            "item": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "WithNamedFields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "name",
+            "value"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "WithNamedFields",
+              "x-enumNames": [
+                "WithNamedFields"
+              ],
+              "enum": [
+                "WithNamedFields"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TestDU/definitions/Case"
+        },
+        {
+          "$ref": "#/definitions/TestDU/definitions/WithOneField"
+        },
+        {
+          "$ref": "#/definitions/TestDU/definitions/WithNamedFields"
+        }
+      ]
+    },
+    "Du": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Du",
+          "x-enumNames": [
+            "Du"
+          ],
+          "enum": [
+            "Du"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestDU"
+        }
+      }
+    },
+    "TestSingleDU": {
+      "type": "string",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "Single",
+        "Double",
+        "Triple"
+      ],
+      "enum": [
+        "Single",
+        "Double",
+        "Triple"
+      ]
+    },
+    "SingleDu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "SingleDu",
+          "x-enumNames": [
+            "SingleDu"
+          ],
+          "enum": [
+            "SingleDu"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestSingleDU"
+        }
+      }
+    },
+    "TestEnum": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "First",
+        "Second",
+        "Third"
+      ],
+      "enum": [
+        "First",
+        "Second",
+        "Third"
+      ]
+    },
+    "Enum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Enum",
+          "x-enumNames": [
+            "Enum"
+          ],
+          "enum": [
+            "Enum"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestEnum"
+        }
+      }
+    },
+    "TestClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+    "Class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Class",
+          "x-enumNames": [
+            "Class"
+          ],
+          "enum": [
+            "Class"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestClass"
+        }
+      }
+    },
+    "Opt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Opt",
+          "x-enumNames": [
+            "Opt"
+          ],
+          "enum": [
+            "Opt"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestRecord"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/Rec"
+    },
+    {
+      "$ref": "#/definitions/Du"
+    },
+    {
+      "$ref": "#/definitions/SingleDu"
+    },
+    {
+      "$ref": "#/definitions/Enum"
+    },
+    {
+      "$ref": "#/definitions/Class"
+    },
+    {
+      "$ref": "#/definitions/Opt"
+    }
+  ]
+}

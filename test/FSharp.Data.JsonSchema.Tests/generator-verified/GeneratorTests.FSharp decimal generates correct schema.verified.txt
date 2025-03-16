@@ -1,0 +1,68 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDecimal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "test",
+    "total"
+  ],
+  "properties": {
+    "test": {
+      "$ref": "#/definitions/DuWithDecimal"
+    },
+    "total": {
+      "type": "number",
+      "format": "decimal"
+    }
+  },
+  "definitions": {
+    "DuWithDecimal": {
+      "definitions": {
+        "Nothing": {
+          "type": "string",
+          "default": "Nothing",
+          "additionalProperties": false,
+          "x-enumNames": [
+            "Nothing"
+          ],
+          "enum": [
+            "Nothing"
+          ]
+        },
+        "Amount": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "item"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "Amount",
+              "x-enumNames": [
+                "Amount"
+              ],
+              "enum": [
+                "Amount"
+              ]
+            },
+            "item": {
+              "type": "number",
+              "format": "decimal"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DuWithDecimal/definitions/Nothing"
+        },
+        {
+          "$ref": "#/definitions/DuWithDecimal/definitions/Amount"
+        }
+      ]
+    }
+  }
+}

@@ -35,6 +35,7 @@ let tests =
   "title": "outerReq",
   "type": "object",
   "additionalProperties": false,
+  "required":["outer1"],
   "properties": {
     "outer1": {
       "$ref": "#/definitions/Inner"
@@ -44,6 +45,7 @@ let tests =
     "Inner": {
       "type": "object",
       "additionalProperties": false,
+      "required":["inner1","inner2"],
       "properties": {
         "inner1": {
           "type": "integer",
@@ -81,6 +83,7 @@ let tests =
     "Inner": {
       "type": "object",
       "additionalProperties": false,
+      "required":["inner1","inner2"],
       "properties": {
         "inner1": {
           "type": "integer",

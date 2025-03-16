@@ -1,0 +1,30 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "PaginatedResultOfObject",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page",
+    "perPage",
+    "total",
+    "results"
+  ],
+  "properties": {
+    "page": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "perPage": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "total": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "results": {
+      "type": "array",
+      "items": {}
+    }
+  }
+}

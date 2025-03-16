@@ -1,0 +1,23 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithArrayOption",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hey"
+  ],
+  "properties": {
+    "hey": {
+      "type": "string"
+    },
+    "many": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

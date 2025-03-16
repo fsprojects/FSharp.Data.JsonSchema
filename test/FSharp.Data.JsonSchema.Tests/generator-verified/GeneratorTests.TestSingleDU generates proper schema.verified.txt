@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestSingleDU",
+  "type": "string",
+  "additionalProperties": false,
+  "x-enumNames": [
+    "Single",
+    "Double",
+    "Triple"
+  ],
+  "enum": [
+    "Single",
+    "Double",
+    "Triple"
+  ]
+}

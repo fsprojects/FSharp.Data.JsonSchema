@@ -38,6 +38,36 @@ let tests =
               Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
           }
 
+          test "ValueOption.None should serialize as null" {
+            let expected = "null"
+            let actual = Json.Serialize(ValueNone, "tag")
+            Expect.equal actual expected "Expected serializer to convert ValueNone null"
+          }
+
+          test "ValueOption.ValueNone should roundtrip" {
+              let expected = ValueNone
+
+              let actual =
+                  Json.Deserialize(Json.Serialize(expected, "tag"), "tag")
+
+              Expect.equal actual expected "Expected serializer to convert ValueNone to null"
+          }
+
+          test "ValueOption.ValueSome(1) should serialize as 1" {
+              let expected = "1"
+              let actual = Json.Serialize(ValueSome 1, "tag")
+              Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
+          }
+
+          test "ValueOption.ValueSome(1) should roundtrip" {
+              let expected = ValueSome 1
+
+              let actual =
+                  Json.Deserialize(Json.Serialize(expected, "tag"), "tag")
+
+              Expect.equal actual expected "Expected serializer to convert option to unwrapped value"
+          }
+
           test "tuple should serialize as array" {
               let expected = """["2021-03-01T00:00:00",10.01]"""
 
@@ -265,4 +295,20 @@ let tests =
               let actual = Json.Deserialize("""{"name":"Ryan"}""")
 
               Expect.equal actual expected "Expected serializer to accept missing, optional field"
+          }
+
+          test "Sequence field required to be explicitly empty" {
+              Expect.throws
+                  (fun () -> Json.Deserialize<PaginatedResult<_>>("""{"page":1,"perPage":10,"total":20}""") |> ignore)
+                  "Expected serializer to enforce sequence field"
+          }
+
+          test "Skippable sequence field not required to be explicitly empty" {
+              let expected =
+                  { RecWithSkippableSeq.Post = "Hello"
+                    Likes = System.Text.Json.Serialization.Skippable.Skip }
+
+              let actual = Json.Deserialize("""{"post":"Hello"}""")
+
+              Expect.equal actual expected "Expected serializer to accept missing, skippable sequence field"
           } ]

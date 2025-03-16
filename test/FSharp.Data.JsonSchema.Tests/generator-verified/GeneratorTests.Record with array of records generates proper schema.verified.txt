@@ -1,0 +1,35 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithRecArray",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v"
+  ],
+  "properties": {
+    "v": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestRecord"
+      }
+    }
+  },
+  "definitions": {
+    "TestRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

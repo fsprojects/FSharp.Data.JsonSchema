@@ -1,0 +1,64 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Even",
+  "definitions": {
+    "Odd": {
+      "definitions": {
+        "Odd": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string",
+              "default": "Odd",
+              "x-enumNames": [
+                "Odd"
+              ],
+              "enum": [
+                "Odd"
+              ]
+            },
+            "item": {
+              "$ref": "#/definitions/Even"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Odd/definitions/Odd"
+        }
+      ]
+    },
+    "Even": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Even",
+          "x-enumNames": [
+            "Even"
+          ],
+          "enum": [
+            "Even"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/Odd/definitions/Odd"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/Even"
+    }
+  ]
+}

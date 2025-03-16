@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Integer",
+  "type": [
+    "integer",
+    "null"
+  ],
+  "format": "int32"
+}

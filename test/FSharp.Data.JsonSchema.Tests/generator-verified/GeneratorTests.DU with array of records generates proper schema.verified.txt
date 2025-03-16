@@ -1,0 +1,70 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DUWithRecArray",
+  "definitions": {
+    "AA": {
+      "type": "string",
+      "default": "AA",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "AA"
+      ],
+      "enum": [
+        "AA"
+      ]
+    },
+    "TestRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+    "TestRecordOf": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestRecord"
+      }
+    },
+    "Records": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Records",
+          "x-enumNames": [
+            "Records"
+          ],
+          "enum": [
+            "Records"
+          ]
+        },
+        "item": {
+          "$ref": "#/definitions/TestRecordOf"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/AA"
+    },
+    {
+      "$ref": "#/definitions/Records"
+    }
+  ]
+}

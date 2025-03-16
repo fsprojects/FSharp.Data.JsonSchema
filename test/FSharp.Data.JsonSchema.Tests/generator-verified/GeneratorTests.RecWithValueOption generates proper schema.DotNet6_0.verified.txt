@@ -1,0 +1,21 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithValueOption",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hey"
+  ],
+  "properties": {
+    "count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "int32"
+    },
+    "hey": {
+      "type": "string"
+    }
+  }
+}
