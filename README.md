@@ -2,11 +2,8 @@
 
 Provides an opinionated, idiomatic JSON serializer and [JSON Schema](https://json-schema.org/) definition generation for F# types using [FSharp.SystemTextJson](https://github.com/Tarmil/FSharp.SystemTextJson) and [NJsonSchema](https://github.com/RicoSuter/NJsonSchema).
 
+[![NuGet Status](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema/)
 ![Build status](https://github.com/panesofglass/FSharp.Data.JsonSchema/workflows/CI/badge.svg)
-
-[![Build History](https://buildstats.info/github/chart/panesofglass/FSharp.Data.JsonSchema?branch=master)](https://github.com/panesofglass/FSharp.Data.JsonSchema/actions?query=workflow%3ACI)
-
-[![NuGet Badge](https://buildstats.info/nuget/fsharp.data.jsonschema)](https://www.nuget.org/packages/FSharp.Data.JsonSchema/)
 
 ## Why JSON Schema?
 
