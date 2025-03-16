@@ -4,14 +4,18 @@
     <Version>$(Version)</Version>
     <Owners>Ryan Riley</Owners>
     <Authors>Ryan Riley</Authors>
-    <PackageProjectUrl>https://github.com/panesofglass/FSharp.Data.JsonSchema</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2023</Copyright>
-    <PackageTags>fsharp json schema jsonschema</PackageTags>
     <Summary>FSharp.Data.JsonSchema provides idiomatic generation of JSON Schema definitions for F# types.</Summary>
     <Description>FSharp.Data.JsonSchema provides idiomatic generation of JSON Schema definitions for F# types.</Description>
+    <Copyright>Copyright © 2019-2025 Ryan Riley. All rights reserved.</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/fsprojects/FSharp.Data.JsonSchema</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/fsprojects/FSharp.Data.JsonSchema</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>fsharp json schema jsonschema</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <IncludeContentInPack>false</IncludeContentInPack>
