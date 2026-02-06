@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithTimeOnly",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meetingTime",
+    "deadline"
+  ],
+  "properties": {
+    "meetingTime": {
+      "$ref": "#/definitions/TimeOnly"
+    },
+    "deadline": {
+      "$ref": "#/definitions/TimeOnly"
+    }
+  },
+  "definitions": {
+    "TimeOnly": {
+      "type": "string",
+      "format": "time"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithGuid",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "correlationId"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/Guid"
+    },
+    "correlationId": {
+      "$ref": "#/definitions/Guid"
+    }
+  },
+  "definitions": {
+    "Guid": {
+      "type": "string",
+      "format": "guid"
+    }
+  }
+}

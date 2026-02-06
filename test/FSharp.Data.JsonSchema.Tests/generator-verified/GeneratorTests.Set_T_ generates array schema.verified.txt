@@ -1,0 +1,25 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithSet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "uniqueIds",
+    "categories"
+  ],
+  "properties": {
+    "uniqueIds": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithDateOnly",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "birthDate",
+    "startDate"
+  ],
+  "properties": {
+    "birthDate": {
+      "$ref": "#/definitions/DateOnly"
+    },
+    "startDate": {
+      "$ref": "#/definitions/DateOnly"
+    }
+  },
+  "definitions": {
+    "DateOnly": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithByteArray",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data",
+    "signature"
+  ],
+  "properties": {
+    "data": {
+      "type": "string",
+      "format": "byte"
+    },
+    "signature": {
+      "type": "string",
+      "format": "byte"
+    }
+  }
+}

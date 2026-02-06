@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithTimeSpan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "duration",
+    "timeout"
+  ],
+  "properties": {
+    "duration": {
+      "$ref": "#/definitions/TimeSpan"
+    },
+    "timeout": {
+      "$ref": "#/definitions/TimeSpan"
+    }
+  },
+  "definitions": {
+    "TimeSpan": {
+      "type": "string",
+      "format": "duration"
+    }
+  }
+}

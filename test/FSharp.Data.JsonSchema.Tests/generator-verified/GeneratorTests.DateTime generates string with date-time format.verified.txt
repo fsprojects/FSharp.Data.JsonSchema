@@ -1,0 +1,28 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithDateTime",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventDate",
+    "modifiedAt"
+  ],
+  "properties": {
+    "eventDate": {
+      "$ref": "#/definitions/DateTime"
+    },
+    "modifiedAt": {
+      "$ref": "#/definitions/DateTimeOffset"
+    }
+  },
+  "definitions": {
+    "DateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "DateTimeOffset": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

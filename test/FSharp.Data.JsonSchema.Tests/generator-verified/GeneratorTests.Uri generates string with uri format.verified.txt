@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithUri",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "homepage",
+    "apiEndpoint"
+  ],
+  "properties": {
+    "homepage": {
+      "$ref": "#/definitions/Uri"
+    },
+    "apiEndpoint": {
+      "$ref": "#/definitions/Uri"
+    }
+  },
+  "definitions": {
+    "Uri": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}
