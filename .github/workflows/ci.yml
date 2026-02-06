@@ -48,7 +48,7 @@ jobs:
         run: dotnet test -c Release --no-restore --no-build --framework net10.0 --logger "GitHubActions;report-warnings=false"
 
       - name: Pack
-        run: dotnet pack -c Release --no-restore --no-build --include-symbols -o out
+        run: dotnet pack -c Release --no-restore --include-symbols -o out
 
       - name: Verify packages
         run: |
