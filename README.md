@@ -1,6 +1,6 @@
 # FSharp.Data.JsonSchema
 
-Provides an opinionated, idiomatic [JSON Schema](https://json-schema.org/) definition generation for F# types.
+Idiomatic [JSON Schema](https://json-schema.org/) generation for F# types with a pluggable, target-agnostic Core IR. Translate F# types into JSON Schema, OpenAPI schemas, or implement your own custom translator.
 
 | Package | NuGet | Status |
 |---------|-------|--------|
@@ -44,13 +44,27 @@ OpenAPI schema translator for F# types, designed for ASP.NET Core's built-in Ope
 - Supports Microsoft.OpenApi 1.6.x (net9.0) and 2.0.x (net10.0)
 - Targets net9.0 and net10.0
 
-## Why JSON Schema?
+## Why This Library?
 
-[JSON Schema](https://json-schema.org/) is a standard, evolving format for specifying the structure of JSON documents. JSON Schema is used in [Open API](https://www.openapis.org/) and can be used by clients to validate that the payload received or to be sent matches the expected schema.
+[JSON Schema](https://json-schema.org/) is a standard format for describing JSON document structure, used extensively in [OpenAPI](https://www.openapis.org/), API documentation, and client-side validation.
 
-Tools exist for generating nicely formatted JSON from F#, e.g. [FSharpLu.Json](https://github.com/Microsoft/fsharplu) and [FSharp.SystemTextJson](https://github.com/Tarmil/FSharp.SystemTextJson).
+**F#-First Type Analysis:** This library provides idiomatic JSON Schema generation that understands F# types natively:
+- Discriminated unions → `anyOf` with discriminators
+- Options → nullable wrappers
+- Records → typed objects with required fields
+- Fieldless DUs → string enums
 
-[NJsonSchema](https://github.com/RicoSuter/NJsonSchema) provides a way to generate and validate JSON Schema for .NET languages, but these don't necessarily translate well to F# types, e.g. `anyOf` mapping to F#'s discriminated unions. This library strives to fill this gap.
+**Pluggable Architecture:** Built around a target-agnostic Core IR:
+- **FSharp.Data.JsonSchema.Core** — Type analyzer that produces `SchemaNode` IR
+- **Translators** — Convert IR to any target format (NJsonSchema, OpenAPI, or custom)
+- **Extensible** — Implement your own translator for any schema format
+
+**Multiple Targets:** Out-of-the-box support for:
+- [NJsonSchema](https://github.com/RicoSuter/NJsonSchema) — Full JSON Schema generation and validation
+- OpenAPI — Native ASP.NET Core integration via `IOpenApiSchemaTransformer`
+- Custom — Build your own translator over the Core IR
+
+While [FSharp.SystemTextJson](https://github.com/Tarmil/FSharp.SystemTextJson) handles JSON serialization beautifully, this library provides the schema definitions that document and validate that JSON.
 
 ## Usage
 
