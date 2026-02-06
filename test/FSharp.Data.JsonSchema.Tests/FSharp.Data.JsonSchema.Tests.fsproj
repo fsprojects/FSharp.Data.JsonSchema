@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FSharp.Data.JsonSchema\FSharp.Data.JsonSchema.fsproj" />
+    <ProjectReference Include="..\..\src\FSharp.Data.JsonSchema.NJsonSchema\FSharp.Data.JsonSchema.NJsonSchema.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestTypes.fs" />

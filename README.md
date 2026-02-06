@@ -2,11 +2,12 @@
 
 Provides an opinionated, idiomatic [JSON Schema](https://json-schema.org/) definition generation for F# types.
 
-| Package | NuGet |
-|---------|-------|
-| FSharp.Data.JsonSchema.Core | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.Core.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema.Core/) |
-| FSharp.Data.JsonSchema | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema/) |
-| FSharp.Data.JsonSchema.OpenApi | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.OpenApi.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema.OpenApi/) |
+| Package | NuGet | Status |
+|---------|-------|--------|
+| FSharp.Data.JsonSchema.Core | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.Core.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema.Core/) | ✅ Active |
+| FSharp.Data.JsonSchema.NJsonSchema | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.NJsonSchema.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema.NJsonSchema/) | ✅ Active |
+| FSharp.Data.JsonSchema.OpenApi | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.OpenApi.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema.OpenApi/) | ✅ Active |
+| FSharp.Data.JsonSchema | [![NuGet](http://img.shields.io/nuget/v/FSharp.Data.JsonSchema.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.JsonSchema/) | ⚠️ Deprecated (use NJsonSchema) |
 
 ## Packages
 
@@ -20,14 +21,20 @@ Target-agnostic JSON Schema IR (intermediate representation) and F# type analyze
 - **No NJsonSchema or OpenAPI dependency** — only FSharp.Core and FSharp.SystemTextJson
 - Targets netstandard2.0 through net10.0
 
-### FSharp.Data.JsonSchema
+### FSharp.Data.JsonSchema.NJsonSchema
 
-NJsonSchema-based JSON Schema generation for F# types. This is the original package, now internally powered by Core.
+NJsonSchema-based JSON Schema generation for F# types (formerly `FSharp.Data.JsonSchema`).
 
 - `Generator.Create` and `Generator.CreateMemoized` generate `NJsonSchema.JsonSchema` from F# types
 - `Validation` module for validating JSON against a schema
 - `FSharp.Data.Json` serializer with schema validation
 - Targets netstandard2.0 through net10.0
+
+### FSharp.Data.JsonSchema ⚠️ DEPRECATED
+
+**This package is deprecated and renamed to `FSharp.Data.JsonSchema.NJsonSchema`.**
+
+The `FSharp.Data.JsonSchema` package now serves as a compatibility shim that references `FSharp.Data.JsonSchema.NJsonSchema`. Please update your package reference to use `FSharp.Data.JsonSchema.NJsonSchema` directly. This deprecated package will not receive updates beyond version 3.0.0.
 
 ### FSharp.Data.JsonSchema.OpenApi
 
@@ -72,7 +79,7 @@ match doc.Root with
 ### NJsonSchema: Generate and validate JSON Schema
 
 ```fsharp
-#r "nuget: FSharp.Data.JsonSchema, 3.0.0"
+#r "nuget: FSharp.Data.JsonSchema.NJsonSchema, 3.0.0"
 #r "nuget: NJsonSchema, 11.0.0"
 
 open FSharp.Data.JsonSchema
