@@ -17,6 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Use dotnet CLI 3.1
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "3.1.x"
+
+      - name: Use dotnet CLI 6
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "6.0.x"
+
       - name: Use dotnet CLI 8
         uses: actions/setup-dotnet@v4
         with:
