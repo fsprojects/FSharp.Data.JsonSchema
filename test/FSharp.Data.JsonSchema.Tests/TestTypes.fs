@@ -126,6 +126,36 @@ type DUWithRecArray = AA | Records of TestRecord array
 
 type DUWithDUArray = Dus of TestDU array
 
+// Choice types (US2)
+type RecWithChoice2 = { Name: string; Value: Choice<string, int> }
+
+type RecWithChoice3 = { Data: Choice<string, int, bool> }
+
+type RecWithChoiceComplex = { Result: Choice<string, TestRecord> }
+
+type RecWithNestedChoice = { Nested: Choice<int, Choice<string, bool>> }
+
+// Anonymous record types (US1)
+type RecWithAnonRecord = { Name: string; Details: {| Field1: string; Field2: int |} }
+
+type RecWithNestedAnonRecord = { Data: {| Inner: {| Value: int |} |} }
+
+type RecWithOptionalAnonField = { Info: {| Name: string; Age: int option |} }
+
+type RecWithAnonInCollection = { Items: {| Id: int; Label: string |} list }
+
+// DU encoding test types (US3)
+type TestDUForEncoding =
+    | FieldlessCase
+    | SingleField of value: int
+    | MultiField of name: string * count: int
+
+// Test type with JsonFSharpConverter attribute override
+[<System.Text.Json.Serialization.JsonFSharpConverter(UnionEncoding = System.Text.Json.Serialization.JsonUnionEncoding.AdjacentTag)>]
+type TestDUWithAttributeOverride =
+    | Case1
+    | Case2 of value: string
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

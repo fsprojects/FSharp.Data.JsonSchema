@@ -252,14 +252,15 @@ type internal SchemaNameGenerator() =
 [<AbstractClass; Sealed>]
 type Generator private () =
     static let cache =
-        Collections.Concurrent.ConcurrentDictionary<string * Type, JsonSchema>()
+        Collections.Concurrent.ConcurrentDictionary<(string * Core.UnionEncodingStyle) * Type, JsonSchema>()
 
-    static member internal CreateInternal(?casePropertyName) =
+    static member internal CreateInternal(?casePropertyName, ?unionEncoding) =
         let casePropertyName' = defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
         let nameGen = SchemaNameGenerator()
         let config =
             { Core.SchemaGeneratorConfig.defaults with
-                DiscriminatorPropertyName = casePropertyName' }
+                DiscriminatorPropertyName = casePropertyName'
+                UnionEncoding = defaultArg unionEncoding Core.SchemaGeneratorConfig.defaults.UnionEncoding }
 
         // Collect all types referenced from a root type, keyed by their typeId.
         let collectTypeMap (rootType: Type) =
@@ -334,20 +335,22 @@ type Generator private () =
                 | _ -> ()
             schema
 
-    /// Creates a generator using the specified casePropertyName and generationProviders.
-    static member Create(?casePropertyName) =
-        Generator.CreateInternal(?casePropertyName = casePropertyName)
+    /// Creates a generator using the specified casePropertyName and unionEncoding.
+    static member Create(?casePropertyName, ?unionEncoding) =
+        Generator.CreateInternal(?casePropertyName = casePropertyName, ?unionEncoding = unionEncoding)
 
-    /// Creates a memoized generator that stores generated schemas in a global cache by Type.
-    static member CreateMemoized(?casePropertyName) =
+    /// Creates a memoized generator that stores generated schemas in a global cache by Type and casePropertyName.
+    static member CreateMemoized(?casePropertyName, ?unionEncoding) =
         let casePropertyName =
             defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
+        let unionEncoding =
+            defaultArg unionEncoding Core.SchemaGeneratorConfig.defaults.UnionEncoding
 
         fun ty ->
             cache.GetOrAdd(
-                (casePropertyName, ty),
+                ((casePropertyName, unionEncoding), ty),
                 let generator =
-                    Generator.CreateInternal(casePropertyName)
+                    Generator.CreateInternal(casePropertyName, unionEncoding)
 
                 generator ty
             )

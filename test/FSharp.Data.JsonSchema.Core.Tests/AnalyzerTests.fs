@@ -460,3 +460,246 @@ let configTests =
             | other -> failtestf "Expected Object, got %A" other
         }
     ]
+
+[<Tests>]
+let choiceTests =
+    testList "Choice types" [
+        test "Choice<string, int> produces AnyOf with two primitives" {
+            let doc = analyze<RecWithChoice2>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let valueProp = obj.Properties |> List.find (fun p -> p.Name = "value")
+                match valueProp.Schema with
+                | SchemaNode.AnyOf schemas ->
+                    Expect.equal schemas.Length 2 "Should have 2 alternatives"
+                    match schemas.[0], schemas.[1] with
+                    | SchemaNode.Primitive(PrimitiveType.String, None), SchemaNode.Primitive(PrimitiveType.Integer, Some "int32") -> ()
+                    | other1, other2 -> failtestf "Expected String and Integer primitives, got %A and %A" other1 other2
+                | other -> failtestf "Expected AnyOf, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "Choice<string, int, bool> produces AnyOf with three primitives" {
+            let doc = analyze<RecWithChoice3>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let dataProp = obj.Properties |> List.find (fun p -> p.Name = "data")
+                match dataProp.Schema with
+                | SchemaNode.AnyOf schemas ->
+                    Expect.equal schemas.Length 3 "Should have 3 alternatives"
+                    match schemas.[0], schemas.[1], schemas.[2] with
+                    | SchemaNode.Primitive(PrimitiveType.String, None),
+                      SchemaNode.Primitive(PrimitiveType.Integer, Some "int32"),
+                      SchemaNode.Primitive(PrimitiveType.Boolean, None) -> ()
+                    | other1, other2, other3 -> failtestf "Expected String, Integer, Boolean, got %A, %A, %A" other1 other2 other3
+                | other -> failtestf "Expected AnyOf, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "Choice<string, TestRecord> produces AnyOf with primitive and Ref" {
+            let doc = analyze<RecWithChoiceComplex>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let resultProp = obj.Properties |> List.find (fun p -> p.Name = "result")
+                match resultProp.Schema with
+                | SchemaNode.AnyOf schemas ->
+                    Expect.equal schemas.Length 2 "Should have 2 alternatives"
+                    match schemas.[0], schemas.[1] with
+                    | SchemaNode.Primitive(PrimitiveType.String, None), SchemaNode.Ref "TestRecord" -> ()
+                    | other1, other2 -> failtestf "Expected String and Ref TestRecord, got %A and %A" other1 other2
+                | other -> failtestf "Expected AnyOf, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "nested Choice<int, Choice<string, bool>> produces AnyOf with primitive and nested AnyOf" {
+            let doc = analyze<RecWithNestedChoice>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let nestedProp = obj.Properties |> List.find (fun p -> p.Name = "nested")
+                match nestedProp.Schema with
+                | SchemaNode.AnyOf schemas ->
+                    Expect.equal schemas.Length 2 "Should have 2 alternatives"
+                    match schemas.[0], schemas.[1] with
+                    | SchemaNode.Primitive(PrimitiveType.Integer, Some "int32"), SchemaNode.AnyOf innerSchemas ->
+                        Expect.equal innerSchemas.Length 2 "Inner AnyOf should have 2 alternatives"
+                        match innerSchemas.[0], innerSchemas.[1] with
+                        | SchemaNode.Primitive(PrimitiveType.String, None), SchemaNode.Primitive(PrimitiveType.Boolean, None) -> ()
+                        | other1, other2 -> failtestf "Expected String and Boolean in inner AnyOf, got %A and %A" other1 other2
+                    | other1, other2 -> failtestf "Expected Integer and nested AnyOf, got %A and %A" other1 other2
+                | other -> failtestf "Expected AnyOf, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+    ]
+
+[<Tests>]
+let anonymousRecordTests =
+    testList "anonymous records" [
+        test "simple anonymous record produces inline Object with no TypeId" {
+            let doc = analyze<RecWithAnonRecord>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let detailsProp = obj.Properties |> List.find (fun p -> p.Name = "details")
+                match detailsProp.Schema with
+                | SchemaNode.Object anonObj ->
+                    Expect.isNone anonObj.TypeId "Anonymous record should have no TypeId"
+                    Expect.isNone anonObj.Title "Anonymous record should have no Title"
+                    Expect.equal anonObj.Properties.Length 2 "Should have 2 properties"
+                    let field1 = anonObj.Properties |> List.find (fun p -> p.Name = "field1")
+                    let field2 = anonObj.Properties |> List.find (fun p -> p.Name = "field2")
+                    match field1.Schema, field2.Schema with
+                    | SchemaNode.Primitive(PrimitiveType.String, None), SchemaNode.Primitive(PrimitiveType.Integer, Some "int32") -> ()
+                    | other1, other2 -> failtestf "Expected String and Integer, got %A and %A" other1 other2
+                | other -> failtestf "Expected Object for anonymous record, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "nested anonymous record produces nested inline Objects" {
+            let doc = analyze<RecWithNestedAnonRecord>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let dataProp = obj.Properties |> List.find (fun p -> p.Name = "data")
+                match dataProp.Schema with
+                | SchemaNode.Object outerAnon ->
+                    Expect.isNone outerAnon.TypeId "Outer anonymous record should have no TypeId"
+                    let innerProp = outerAnon.Properties |> List.find (fun p -> p.Name = "inner")
+                    match innerProp.Schema with
+                    | SchemaNode.Object innerAnon ->
+                        Expect.isNone innerAnon.TypeId "Inner anonymous record should have no TypeId"
+                        Expect.equal innerAnon.Properties.Length 1 "Inner should have 1 property"
+                    | other -> failtestf "Expected nested Object, got %A" other
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "anonymous record with optional field produces Nullable" {
+            let doc = analyze<RecWithOptionalAnonField>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let infoProp = obj.Properties |> List.find (fun p -> p.Name = "info")
+                match infoProp.Schema with
+                | SchemaNode.Object anonObj ->
+                    let ageProp = anonObj.Properties |> List.find (fun p -> p.Name = "age")
+                    match ageProp.Schema with
+                    | SchemaNode.Nullable (SchemaNode.Primitive(PrimitiveType.Integer, Some "int32")) -> ()
+                    | other -> failtestf "Expected Nullable Integer, got %A" other
+                    Expect.equal anonObj.Required ["name"] "Only non-option field should be required"
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+
+        test "anonymous record in collection produces inline Object in Array" {
+            let doc = analyze<RecWithAnonInCollection>
+            match doc.Root with
+            | SchemaNode.Object obj ->
+                let itemsProp = obj.Properties |> List.find (fun p -> p.Name = "items")
+                match itemsProp.Schema with
+                | SchemaNode.Array itemSchema ->
+                    match itemSchema with
+                    | SchemaNode.Object anonObj ->
+                        Expect.isNone anonObj.TypeId "Anonymous record in array should have no TypeId"
+                        Expect.equal anonObj.Properties.Length 2 "Should have 2 properties"
+                    | other -> failtestf "Expected Object in array, got %A" other
+                | other -> failtestf "Expected Array, got %A" other
+            | other -> failtestf "Expected Object, got %A" other
+        }
+    ]
+
+[<Tests>]
+let duEncodingTests =
+    testList "DU encoding styles" [
+        test "InternalTag: discriminator + fields in same object" {
+            let config = { SchemaGeneratorConfig.defaults with UnionEncoding = UnionEncodingStyle.InternalTag }
+            let doc = analyzeWith<TestDUForEncoding> config
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                Expect.equal cases.Length 3 "Should have 3 cases"
+                // Check MultiField case has discriminator + fields
+                let multiFieldDef = doc.Definitions |> List.find (fun (name, _) -> name = "MultiField") |> snd
+                match multiFieldDef with
+                | SchemaNode.Object obj ->
+                    Expect.isTrue (obj.Properties |> List.exists (fun p -> p.Name = "kind")) "Should have discriminator property"
+                    Expect.isTrue (obj.Properties |> List.exists (fun p -> p.Name = "name")) "Should have name field"
+                    Expect.isTrue (obj.Properties |> List.exists (fun p -> p.Name = "count")) "Should have count field"
+                    Expect.equal obj.Properties.Length 3 "Should have 3 properties (discriminator + 2 fields)"
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected AnyOf, got %A" other
+        }
+
+        test "AdjacentTag: separate tag and fields properties" {
+            let config = { SchemaGeneratorConfig.defaults with UnionEncoding = UnionEncodingStyle.AdjacentTag }
+            let doc = analyzeWith<TestDUForEncoding> config
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                Expect.equal cases.Length 3 "Should have 3 cases"
+                // Check MultiField case has kind + fields structure
+                let multiFieldDef = doc.Definitions |> List.find (fun (name, _) -> name = "MultiField") |> snd
+                match multiFieldDef with
+                | SchemaNode.Object obj ->
+                    Expect.equal obj.Properties.Length 2 "Should have 2 properties (kind + fields)"
+                    let tagProp = obj.Properties |> List.find (fun p -> p.Name = "kind")
+                    let fieldsProp = obj.Properties |> List.find (fun p -> p.Name = "fields")
+                    match fieldsProp.Schema with
+                    | SchemaNode.Object fieldsObj ->
+                        Expect.equal fieldsObj.Properties.Length 2 "Fields object should have 2 properties"
+                    | other -> failtestf "Expected Object for fields, got %A" other
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected AnyOf, got %A" other
+        }
+
+        test "ExternalTag: case name as property key" {
+            let config = { SchemaGeneratorConfig.defaults with UnionEncoding = UnionEncodingStyle.ExternalTag }
+            let doc = analyzeWith<TestDUForEncoding> config
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                Expect.equal cases.Length 3 "Should have 3 cases"
+                // Check MultiField case wraps fields in case name property
+                let multiFieldDef = doc.Definitions |> List.find (fun (name, _) -> name = "MultiField") |> snd
+                match multiFieldDef with
+                | SchemaNode.Object obj ->
+                    Expect.equal obj.Properties.Length 1 "Should have 1 property (case name)"
+                    let caseProp = obj.Properties |> List.head
+                    Expect.equal caseProp.Name "MultiField" "Property name should be case name"
+                    match caseProp.Schema with
+                    | SchemaNode.Object fieldsObj ->
+                        Expect.equal fieldsObj.Properties.Length 2 "Should have 2 field properties"
+                    | other -> failtestf "Expected Object for case value, got %A" other
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected AnyOf, got %A" other
+        }
+
+        test "Untagged: no discriminator, just fields" {
+            let config = { SchemaGeneratorConfig.defaults with UnionEncoding = UnionEncodingStyle.Untagged }
+            let doc = analyzeWith<TestDUForEncoding> config
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                Expect.equal cases.Length 3 "Should have 3 cases"
+                // Check MultiField case has only fields (no discriminator)
+                let multiFieldDef = doc.Definitions |> List.find (fun (name, _) -> name = "MultiField") |> snd
+                match multiFieldDef with
+                | SchemaNode.Object obj ->
+                    Expect.equal obj.Properties.Length 2 "Should have 2 properties (only fields, no discriminator)"
+                    Expect.isFalse (obj.Properties |> List.exists (fun p -> p.Name = "kind")) "Should not have discriminator"
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected AnyOf, got %A" other
+        }
+
+        test "Attribute override: per-type attribute overrides config" {
+            // Config says InternalTag, but attribute says AdjacentTag
+            let config = { SchemaGeneratorConfig.defaults with UnionEncoding = UnionEncodingStyle.InternalTag }
+            let doc = analyzeWith<TestDUWithAttributeOverride> config
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                // Check Case2 uses AdjacentTag (tag + fields structure)
+                let case2Def = doc.Definitions |> List.find (fun (name, _) -> name = "Case2") |> snd
+                match case2Def with
+                | SchemaNode.Object obj ->
+                    // AdjacentTag should have 2 properties: kind and fields
+                    Expect.equal obj.Properties.Length 2 "AdjacentTag should have kind + fields"
+                    let hasKind = obj.Properties |> List.exists (fun p -> p.Name = "kind")
+                    let hasFields = obj.Properties |> List.exists (fun p -> p.Name = "fields")
+                    Expect.isTrue hasKind "Should have kind property (AdjacentTag)"
+                    Expect.isTrue hasFields "Should have fields property (AdjacentTag)"
+                | other -> failtestf "Expected Object, got %A" other
+            | other -> failtestf "Expected AnyOf, got %A" other
+        }
+    ]

@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithOptionalAnonField",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "info"
+  ],
+  "properties": {
+    "info": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "age": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

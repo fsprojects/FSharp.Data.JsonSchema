@@ -1,0 +1,98 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDUForEncoding",
+  "definitions": {
+    "FieldlessCase": {
+      "type": "string",
+      "default": "FieldlessCase",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "FieldlessCase"
+      ],
+      "enum": [
+        "FieldlessCase"
+      ]
+    },
+    "SingleField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "fields"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "default": "SingleField",
+          "x-enumNames": [
+            "SingleField"
+          ],
+          "enum": [
+            "SingleField"
+          ]
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      }
+    },
+    "MultiField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "fields"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "default": "MultiField",
+          "x-enumNames": [
+            "MultiField"
+          ],
+          "enum": [
+            "MultiField"
+          ]
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "count"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/FieldlessCase"
+    },
+    {
+      "$ref": "#/definitions/SingleField"
+    },
+    {
+      "$ref": "#/definitions/MultiField"
+    }
+  ]
+}
