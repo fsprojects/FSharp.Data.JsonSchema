@@ -1,3 +1,41 @@
+### FSharp.Data.JsonSchema.NJsonSchema 3.0.0
+
+* **New Package**: Renamed from FSharp.Data.JsonSchema (this is now the go-forward package name)
+* Internal implementation now uses Core IR pipeline (`SchemaAnalyzer.analyze >> NJsonSchemaTranslator.translate`)
+* Add dependency on FSharp.Data.JsonSchema.Core
+* Add net9.0 and net10.0 target frameworks
+* Existing public API (`Generator.Create`, `Generator.CreateMemoized`, schema processors, `Validation` module) remains unchanged
+* All existing schema output remains byte-identical
+* Critical regression fixes for format-annotated types (DateTime, Guid, Uri, byte[], Map, Dictionary, Set, etc.)
+
+### FSharp.Data.JsonSchema 3.0.0 [DEPRECATED]
+
+* **This package is deprecated** - renamed to FSharp.Data.JsonSchema.NJsonSchema
+* This is a compatibility shim that references FSharp.Data.JsonSchema.NJsonSchema
+* Please update your package reference to FSharp.Data.JsonSchema.NJsonSchema
+* This package will not receive updates beyond 3.0.0
+* Marked with `[<Obsolete>]` attributes to provide compiler warnings
+
+### FSharp.Data.JsonSchema.Core 3.0.0
+
+* **Version aligned** with main package family (was 1.0.0)
+* Target-agnostic JSON Schema IR library
+* `SchemaNode` discriminated union with 11 variants for representing JSON Schema
+* `SchemaAnalyzer.analyze` for recursive F# type analysis
+* `SchemaGeneratorConfig` for configuring discriminator property name, naming policy, and additional properties
+* Supports: records, struct records, multi-case DUs, fieldless DUs, enums, option/voption, Nullable, lists, arrays, sequences, recursive types, generic types, .NET classes
+* Only depends on FSharp.Core and FSharp.SystemTextJson
+* Targets netstandard2.0 through net10.0
+
+### FSharp.Data.JsonSchema.OpenApi 3.0.0
+
+* **Version aligned** with main package family (was 1.0.0)
+* OpenAPI schema translator for F# types
+* `OpenApiSchemaTranslator.translate` converts Core IR to OpenApiSchema
+* `FSharpSchemaTransformer` implements `IOpenApiSchemaTransformer` for ASP.NET Core OpenAPI integration
+* Supports Microsoft.OpenApi 1.6.x (net9.0) and 2.0.x (net10.0) via conditional compilation
+* Targets net9.0 and net10.0
+
 ### New in 2.0.2 - (Released 2023/04/16)
 * Fix Multi Case DUs should set 'additionalProperties' to false (#16)
 * Fix DUs with decimals cause the 'Decimal' type to get redefined (#18)

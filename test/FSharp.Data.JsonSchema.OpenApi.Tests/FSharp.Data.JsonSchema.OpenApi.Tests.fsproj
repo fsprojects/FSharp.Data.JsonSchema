@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FSharp.Data.JsonSchema.Core\FSharp.Data.JsonSchema.Core.fsproj" />
+    <ProjectReference Include="..\..\src\FSharp.Data.JsonSchema.OpenApi\FSharp.Data.JsonSchema.OpenApi.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TranslatorTests.fs" />
+    <Compile Include="TransformerIntegrationTests.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Expecto" Version="9.0.2" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="1.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.9.2" />
+  </ItemGroup>
+</Project>

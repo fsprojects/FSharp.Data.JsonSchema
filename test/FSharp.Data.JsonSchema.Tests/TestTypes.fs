@@ -1,5 +1,23 @@
 namespace FSharp.Data.JsonSchema.Tests
 
+open System
+open System.Collections.Generic
+
+// Regression test types for format-annotated types
+type RecWithDateTime = { EventDate: DateTime; ModifiedAt: DateTimeOffset }
+type RecWithGuid = { Id: Guid; CorrelationId: Guid }
+type RecWithUri = { Homepage: Uri; ApiEndpoint: Uri }
+type RecWithTimeSpan = { Duration: TimeSpan; Timeout: TimeSpan }
+type RecWithByteArray = { Data: byte[]; Signature: byte[] }
+type RecWithMap = { Metadata: Map<string, string>; Tags: Map<string, int> }
+type RecWithDictionary = { Properties: Dictionary<string, string>; Counters: Dictionary<string, int> }
+type RecWithSet = { UniqueIds: Set<int>; Categories: Set<string> }
+
+#if NET6_0_OR_GREATER
+type RecWithDateOnly = { BirthDate: DateOnly; StartDate: DateOnly }
+type RecWithTimeOnly = { MeetingTime: TimeOnly; Deadline: TimeOnly }
+#endif
+
 type TestClass() =
     member val FirstName = "" with get, set
     member val LastName = "" with get, set

@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0;net8.0;net9.0;net10.0</TargetFrameworks>
+    <VersionPrefix>3.0.0</VersionPrefix>
     <PackageId Condition="$(GITHUB_REPOSITORY_OWNER) != 'fsprojects' and $(GITHUB_REPOSITORY_OWNER) != ''">$(GITHUB_REPOSITORY_OWNER).FSharp.Data.JsonSchema</PackageId>
-    <Version>$(Version)</Version>
+    <Description>[DEPRECATED] This package has been renamed to FSharp.Data.JsonSchema.NJsonSchema. Please upgrade to the new package name. This package will not receive updates beyond 3.0.0.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Serializer.fs" />
-    <Compile Include="JsonSchema.fs" />
+    <Compile Include="DeprecationNotice.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23" />
-    <PackageReference Include="NJsonSchema" Version="10.*" />
+    <ProjectReference Include="..\FSharp.Data.JsonSchema.NJsonSchema\FSharp.Data.JsonSchema.NJsonSchema.fsproj" />
   </ItemGroup>
 </Project>

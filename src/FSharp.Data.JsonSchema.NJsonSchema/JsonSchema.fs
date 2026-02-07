@@ -35,6 +35,7 @@ module Reflection =
     let isIntegerEnum (ty: Type) =
         ty.IsEnum && ty.GetEnumUnderlyingType() = typeof<int>
 
+[<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 module Dictionary =
     let getUniqueKey (dict: IDictionary<string, 'T>) (key: string) =
         let mutable i = 0
@@ -46,6 +47,7 @@ module Dictionary =
 
         newKey
 
+[<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type OptionSchemaProcessor() =
     member this.Process(context: SchemaProcessorContext) =
         if
@@ -82,6 +84,7 @@ type OptionSchemaProcessor() =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
+[<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type SingleCaseDuSchemaProcessor() =
 
     member this.Process(context: SchemaProcessorContext) =
@@ -101,6 +104,7 @@ type SingleCaseDuSchemaProcessor() =
     interface ISchemaProcessor with
         member this.Process(context) = this.Process(context)
 
+[<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type MultiCaseDuSchemaProcessor(?casePropertyName) =
     let casePropertyName = defaultArg casePropertyName "kind"
 
@@ -207,6 +211,7 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
         member this.Process(context) = this.Process(context)
 
 
+[<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type RecordSchemaProcessor() =
 
     let isNullableProperty(property: JsonSchemaProperty) =
@@ -244,47 +249,90 @@ type internal SchemaNameGenerator() =
         else
             base.Generate(ty)
 
-[<Sealed>]
-type internal ReflectionService() =
-    inherit DefaultReflectionService()
-
-    override this.GetDescription(contextualType, defaultReferenceTypeNullHandling, settings) =
-        if Reflection.isObjOption contextualType.Type then
-            JsonTypeDescription.Create(contextualType, JsonObjectType.Object, true, null)
-        elif Reflection.isOption contextualType.Type then
-            let typeDescription =
-                this.GetDescription(
-                    contextualType.OriginalGenericArguments.[0],
-                    defaultReferenceTypeNullHandling,
-                    settings
-                )
-
-            typeDescription.IsNullable <- true
-            typeDescription
-        else
-            base.GetDescription(contextualType, defaultReferenceTypeNullHandling, settings)
-
-
 [<AbstractClass; Sealed>]
 type Generator private () =
     static let cache =
         Collections.Concurrent.ConcurrentDictionary<string * Type, JsonSchema>()
 
     static member internal CreateInternal(?casePropertyName) =
-        let settings =
-            JsonSchemaGeneratorSettings(
-                SerializerOptions = FSharp.Data.Json.DefaultOptions,
-                DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull,
-                ReflectionService = ReflectionService(),
-                SchemaNameGenerator = SchemaNameGenerator(),
-                UseXmlDocumentation = true
-            )
+        let casePropertyName' = defaultArg casePropertyName FSharp.Data.Json.DefaultCasePropertyName
+        let nameGen = SchemaNameGenerator()
+        let config =
+            { Core.SchemaGeneratorConfig.defaults with
+                DiscriminatorPropertyName = casePropertyName' }
 
-        settings.SchemaProcessors.Add(OptionSchemaProcessor())
-        settings.SchemaProcessors.Add(SingleCaseDuSchemaProcessor())
-        settings.SchemaProcessors.Add(MultiCaseDuSchemaProcessor(?casePropertyName = casePropertyName))
-        settings.SchemaProcessors.Add(RecordSchemaProcessor())
-        fun ty -> JsonSchema.FromType(ty, settings)
+        // Collect all types referenced from a root type, keyed by their typeId.
+        let collectTypeMap (rootType: Type) =
+            let visited = HashSet<Type>()
+            let typeByName = Dictionary<string, Type>()
+            let rec walk (t: Type) =
+                if visited.Add t then
+                    let typeId = config.TypeIdResolver t
+                    if not (String.IsNullOrEmpty typeId) then
+                        typeByName.[typeId] <- t
+                    if FSharpType.IsRecord(t, true) then
+                        for f in FSharpType.GetRecordFields(t, true) do walk f.PropertyType
+                    elif FSharpType.IsUnion(t, true) then
+                        for c in FSharpType.GetUnionCases(t, true) do
+                            for f in c.GetFields() do walk f.PropertyType
+                    elif t.IsArray then
+                        walk (t.GetElementType())
+                    elif t.IsGenericType then
+                        for a in t.GetGenericArguments() do walk a
+            walk rootType
+            typeByName
+
+        fun (ty: Type) ->
+            let doc = Core.SchemaAnalyzer.analyze config ty
+            let schema = NJsonSchemaTranslator.translate doc
+            // Set title using the same logic as the old SchemaNameGenerator
+            // Don't set title for bare option/voption types (they produce empty schemas)
+            match doc.Root with
+            | Core.SchemaNode.Any -> ()
+            | _ ->
+                let title = nameGen.Generate(ty)
+                if not (System.String.IsNullOrEmpty title) then
+                    schema.Title <- title
+            // Add empty description for .NET enums (matching NJsonSchema behavior)
+            if Reflection.isIntegerEnum ty then
+                schema.Description <- ""
+            // Set additionalProperties = false for fieldless DU enums
+            if FSharpType.IsUnion(ty) && Reflection.allCasesEmpty ty then
+                schema.AllowAdditionalProperties <- false
+            // Apply post-processing to definitions based on their F# types
+            let typeMap = collectTypeMap ty
+            for kv in schema.Definitions do
+                match typeMap.TryGetValue(kv.Key) with
+                | true, defTy ->
+                    if Reflection.isIntegerEnum defTy then
+                        kv.Value.Description <- ""
+                    elif FSharpType.IsUnion(defTy, true) && Reflection.allCasesEmpty defTy then
+                        kv.Value.AllowAdditionalProperties <- false
+                | _ -> ()
+            // Apply DataAnnotation attributes from record fields
+            let applyAnnotations (recordTy: Type) (targetSchema: JsonSchema) =
+                if FSharpType.IsRecord(recordTy, true) then
+                    for field in FSharpType.GetRecordFields(recordTy, true) do
+                        let propName = config.PropertyNamingPolicy field.Name
+                        match targetSchema.Properties.TryGetValue(propName) with
+                        | true, prop ->
+                            for attr in field.GetCustomAttributes(true) do
+                                match attr with
+                                | :? System.ComponentModel.DataAnnotations.RequiredAttribute ->
+                                    prop.MinLength <- 1
+                                | :? System.ComponentModel.DataAnnotations.MaxLengthAttribute as ml ->
+                                    prop.MaxLength <- Nullable ml.Length
+                                | :? System.ComponentModel.DataAnnotations.RangeAttribute as r ->
+                                    prop.Minimum <- Nullable (Convert.ToDecimal(r.Minimum :> obj))
+                                    prop.Maximum <- Nullable (Convert.ToDecimal(r.Maximum :> obj))
+                                | _ -> ()
+                        | _ -> ()
+            applyAnnotations ty schema
+            for kv in schema.Definitions do
+                match typeMap.TryGetValue(kv.Key) with
+                | true, defTy -> applyAnnotations defTy kv.Value
+                | _ -> ()
+            schema
 
     /// Creates a generator using the specified casePropertyName and generationProviders.
     static member Create(?casePropertyName) =
