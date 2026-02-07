@@ -24,6 +24,7 @@ tests/
 F# 8.0+ / .NET SDK 8.0+: Follow standard conventions
 
 ## Recent Changes
+- 003-recursive-types: Added F# 8.0+ / .NET SDK 8.0+ + FSharp.Core, FSharp.SystemTextJson (Core); NJsonSchema (main package); Microsoft.OpenApi (OpenApi package)
 - 002-extended-types: Added F# 8.0+ / .NET SDK 8.0+ + FSharp.Core, FSharp.SystemTextJson (Core); NJsonSchema (main package); Microsoft.OpenApi (OpenApi package)
 
 - 001-core-extraction: Added F# 8.0+ / .NET SDK 8.0+

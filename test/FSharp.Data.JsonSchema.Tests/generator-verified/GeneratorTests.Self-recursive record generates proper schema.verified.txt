@@ -1,0 +1,25 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "LinkedNode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "value"
+  ],
+  "properties": {
+    "value": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "next": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#"
+        }
+      ]
+    }
+  }
+}

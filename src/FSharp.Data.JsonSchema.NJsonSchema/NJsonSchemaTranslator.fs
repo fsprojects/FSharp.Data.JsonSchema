@@ -104,6 +104,12 @@ module internal NJsonSchemaTranslator =
                 let p = mkProp (JsonObjectType.Array ||| JsonObjectType.Null)
                 p.Item <- translateNode rootSchema parentSchema defs items
                 p
+            | SchemaNode.Ref "#" ->
+                let p = JsonSchemaProperty()
+                let nullSchema = mkSchema JsonObjectType.Null
+                p.OneOf.Add(nullSchema)
+                p.OneOf.Add(mkRefSchema rootSchema)
+                p
             | SchemaNode.Ref typeId ->
                 let p = JsonSchemaProperty()
                 let nullSchema = mkSchema JsonObjectType.Null
@@ -173,6 +179,11 @@ module internal NJsonSchemaTranslator =
             | SchemaNode.Array items ->
                 let s = mkSchema (JsonObjectType.Array ||| JsonObjectType.Null)
                 s.Item <- translateNode rootSchema parentSchema defs items
+                s
+            | SchemaNode.Ref "#" ->
+                let s = JsonSchema()
+                s.OneOf.Add(mkSchema JsonObjectType.Null)
+                s.OneOf.Add(mkRefSchema rootSchema)
                 s
             | SchemaNode.Ref typeId ->
                 let s = JsonSchema()

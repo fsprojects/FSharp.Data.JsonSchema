@@ -1,0 +1,65 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TreeNode",
+  "definitions": {
+    "Leaf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Leaf",
+          "x-enumNames": [
+            "Leaf"
+          ],
+          "enum": [
+            "Leaf"
+          ]
+        },
+        "item": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Branch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item1",
+        "item2"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Branch",
+          "x-enumNames": [
+            "Branch"
+          ],
+          "enum": [
+            "Branch"
+          ]
+        },
+        "item1": {
+          "$ref": "#"
+        },
+        "item2": {
+          "$ref": "#"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/Leaf"
+    },
+    {
+      "$ref": "#/definitions/Branch"
+    }
+  ]
+}

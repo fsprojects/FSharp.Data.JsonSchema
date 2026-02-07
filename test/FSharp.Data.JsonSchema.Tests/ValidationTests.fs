@@ -218,4 +218,74 @@ let tests =
             Expect.equal actual expected "Did not roundtrip"
         }
 
+        test "TreeNode (self-recursive DU) with nested structure validates at depth 1" {
+            let schema = generator(typeof<TreeNode>)
+            let instance = TreeNode.Leaf 42
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "TreeNode (self-recursive DU) with nested structure validates at depth 3" {
+            let schema = generator(typeof<TreeNode>)
+            let instance = TreeNode.Branch(TreeNode.Leaf 1, TreeNode.Branch(TreeNode.Leaf 2, TreeNode.Leaf 3))
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "LinkedNode (self-recursive record) validates at depth 1 with None" {
+            let schema = generator(typeof<LinkedNode>)
+            let instance: LinkedNode = { Value = 42; Next = None }
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "LinkedNode (self-recursive record) validates at depth 3" {
+            let schema = generator(typeof<LinkedNode>)
+            let instance: LinkedNode = { Value = 1; Next = Some { Value = 2; Next = Some { Value = 3; Next = None } } }
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "TreeRecord (recursion through collection) validates at depth 1" {
+            let schema = generator(typeof<TreeRecord>)
+            let instance: TreeRecord = { Value = "root"; Children = [] }
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "TreeRecord (recursion through collection) validates at depth 3" {
+            let schema = generator(typeof<TreeRecord>)
+            let instance: TreeRecord = {
+                Value = "root"
+                Children = [
+                    { Value = "child1"; Children = [] }
+                    { Value = "child2"; Children = [{ Value = "grandchild"; Children = [] }] }
+                ]
+            }
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "Expression (multi-case self-recursive DU) validates Literal" {
+            let schema = generator(typeof<Expression>)
+            let instance: Expression = Expression.Literal 42
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
+        test "Expression (multi-case self-recursive DU) validates Add with nested Negate" {
+            let schema = generator(typeof<Expression>)
+            let instance: Expression = Expression.Add(Expression.Literal 1, Expression.Negate(Expression.Literal 2))
+            let json = Json.Serialize(instance, "tag")
+            let actual = Validation.validate schema json
+            "╰〳 ಠ 益 ಠೃ 〵╯" |> Expect.equal actual (Ok())
+        }
+
     ]

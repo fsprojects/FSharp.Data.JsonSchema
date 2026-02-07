@@ -156,6 +156,24 @@ type TestDUWithAttributeOverride =
     | Case1
     | Case2 of value: string
 
+// Recursive type patterns for issue #15
+// Self-recursive DU (exact pattern from GitHub issue #15)
+type TreeNode =
+    | Leaf of int
+    | Branch of TreeNode * TreeNode
+
+// Self-recursive record
+type LinkedNode = { Value: int; Next: LinkedNode option }
+
+// Recursion through collection
+type TreeRecord = { Value: string; Children: TreeRecord list }
+
+// Multi-case self-recursive DU
+type Expression =
+    | Literal of int
+    | Add of Expression * Expression
+    | Negate of Expression
+
 module Util =
     let stripWhitespace text =
         System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "")

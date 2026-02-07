@@ -1,0 +1,21 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TreeRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "value",
+    "children"
+  ],
+  "properties": {
+    "value": {
+      "type": "string"
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "#"
+      }
+    }
+  }
+}
