@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithNestedChoice",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "nested"
+  ],
+  "properties": {
+    "nested": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

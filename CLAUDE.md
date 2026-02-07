@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-02-05
 
 ## Active Technologies
+- F# 8.0+ / .NET SDK 8.0+ + FSharp.Core, FSharp.SystemTextJson (Core); NJsonSchema (main package); Microsoft.OpenApi (OpenApi package) (002-extended-types)
+- N/A (library, no persistence) (002-extended-types)
 
 - F# 8.0+ / .NET SDK 8.0+ (001-core-extraction)
 
@@ -22,6 +24,7 @@ tests/
 F# 8.0+ / .NET SDK 8.0+: Follow standard conventions
 
 ## Recent Changes
+- 002-extended-types: Added F# 8.0+ / .NET SDK 8.0+ + FSharp.Core, FSharp.SystemTextJson (Core); NJsonSchema (main package); Microsoft.OpenApi (OpenApi package)
 
 - 001-core-extraction: Added F# 8.0+ / .NET SDK 8.0+
 

@@ -1,0 +1,26 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithChoice2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "value"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer",
+          "format": "int32"
+        }
+      ]
+    }
+  }
+}

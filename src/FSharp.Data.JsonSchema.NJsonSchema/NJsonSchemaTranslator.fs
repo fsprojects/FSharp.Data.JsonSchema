@@ -132,6 +132,19 @@ module internal NJsonSchemaTranslator =
             p.Format <- translated.Format
             p.AdditionalPropertiesSchema <- translated.AdditionalPropertiesSchema
             p.AllowAdditionalProperties <- translated.AllowAdditionalProperties
+            // Copy AnyOf and OneOf collections for Choice types and other polymorphic schemas
+            for item in translated.AnyOf do
+                p.AnyOf.Add(item)
+            for item in translated.OneOf do
+                p.OneOf.Add(item)
+            // Copy Properties for nested Object schemas (e.g., AdjacentTag fields property, anonymous records)
+            // Only copy if Type is Object to avoid issues with other schema types
+            if translated.Type.HasFlag(JsonObjectType.Object) && translated.Properties.Count > 0 then
+                for kv in translated.Properties do
+                    p.Properties.Add(kv.Key, kv.Value)
+                // Copy Required properties
+                for req in translated.RequiredProperties do
+                    p.RequiredProperties.Add(req)
             p
 
     /// Translate a SchemaNode to a JsonSchema.

@@ -1,0 +1,80 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TestDUForEncoding",
+  "definitions": {
+    "FieldlessCase": {
+      "type": "string",
+      "default": "FieldlessCase",
+      "additionalProperties": false,
+      "x-enumNames": [
+        "FieldlessCase"
+      ],
+      "enum": [
+        "FieldlessCase"
+      ]
+    },
+    "SingleField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "default": "SingleField",
+          "x-enumNames": [
+            "SingleField"
+          ],
+          "enum": [
+            "SingleField"
+          ]
+        },
+        "value": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MultiField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "name",
+        "count"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "default": "MultiField",
+          "x-enumNames": [
+            "MultiField"
+          ],
+          "enum": [
+            "MultiField"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/FieldlessCase"
+    },
+    {
+      "$ref": "#/definitions/SingleField"
+    },
+    {
+      "$ref": "#/definitions/MultiField"
+    }
+  ]
+}

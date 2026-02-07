@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithNestedAnonRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": [
+        "inner"
+      ],
+      "properties": {
+        "inner": {
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      }
+    }
+  }
+}

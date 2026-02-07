@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithAnonRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "details"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "details": {
+      "type": "object",
+      "required": [
+        "field1",
+        "field2"
+      ],
+      "properties": {
+        "field1": {
+          "type": "string"
+        },
+        "field2": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  }
+}

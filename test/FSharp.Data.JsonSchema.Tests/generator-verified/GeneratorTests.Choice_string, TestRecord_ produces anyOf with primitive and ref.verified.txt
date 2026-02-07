@@ -1,0 +1,39 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RecWithChoiceComplex",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result"
+  ],
+  "properties": {
+    "result": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/TestRecord"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "TestRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
