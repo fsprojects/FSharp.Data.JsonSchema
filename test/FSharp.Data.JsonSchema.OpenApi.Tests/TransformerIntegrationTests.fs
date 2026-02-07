@@ -18,6 +18,11 @@ type TestDU =
     | Case
     | WithField of value: int
 
+// Recursive type patterns for issue #15
+type TreeNode =
+    | Leaf of int
+    | Branch of TreeNode * TreeNode
+
 /// Integration tests verifying end-to-end SchemaAnalyzer → OpenApiSchemaTranslator pipeline.
 [<Tests>]
 let integrationTests =
@@ -54,5 +59,14 @@ let integrationTests =
             let config = { SchemaGeneratorConfig.defaults with DiscriminatorPropertyName = "type" }
             let transformer = FSharpSchemaTransformer(config)
             Expect.isNotNull (transformer :> obj) "transformer created with custom config"
+        }
+
+        test "Self-recursive DU (TreeNode) produces AnyOf and component schemas" {
+            let doc = SchemaAnalyzer.analyze SchemaGeneratorConfig.defaults typeof<TreeNode>
+            let (schema: OASchema, components) = OpenApiSchemaTranslator.translate doc
+            // Root should have AnyOf entries
+            Expect.isGreaterThan schema.AnyOf.Count 0 "has anyOf entries for Leaf and Branch"
+            // Should have component schemas for the cases
+            Expect.isGreaterThan components.Count 0 "has component schemas for cases"
         }
     ]

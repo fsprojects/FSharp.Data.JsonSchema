@@ -245,6 +245,47 @@ let recursiveTests =
                 | other -> failtestf "Expected Ref #, got %A" other
             | other -> failtestf "Expected AnyOf, got %A" other
         }
+
+        test "self-recursive DU (TreeNode) produces definitions for cases" {
+            let doc = analyze<TreeNode>
+            Expect.isTrue (hasDef "Leaf" doc) "Leaf case definition exists"
+            Expect.isTrue (hasDef "Branch" doc) "Branch case definition exists"
+        }
+
+        test "self-recursive DU (TreeNode) Branch fields produce Ref #" {
+            let doc = analyze<TreeNode>
+            let branchDef = getDef "Branch" doc
+            // Check that the Branch definition contains at least one Ref "#"
+            let rec findRefs (node: SchemaNode) : SchemaNode list =
+                match node with
+                | SchemaNode.Ref "#" as r -> [r]
+                | SchemaNode.Object obj ->
+                    obj.Properties |> List.collect (fun p -> findRefs p.Schema)
+                | SchemaNode.AnyOf nodes ->
+                    nodes |> List.collect findRefs
+                | SchemaNode.OneOf (nodes, _) ->
+                    nodes |> List.collect findRefs
+                | SchemaNode.Array itemSchema ->
+                    findRefs itemSchema
+                | SchemaNode.Nullable schema ->
+                    findRefs schema
+                | _ -> []
+            let selfRefs = findRefs branchDef
+            Expect.isGreaterThanOrEqual (List.length selfRefs) 1 "Branch case should contain at least one self-reference (Ref #)"
+        }
+
+        test "self-recursive DU (TreeNode) root is AnyOf with refs to cases" {
+            let doc = analyze<TreeNode>
+            match doc.Root with
+            | SchemaNode.AnyOf cases ->
+                Expect.equal (List.length cases) 2 "Two cases (Leaf, Branch)"
+                let caseRefs = cases |> List.map (fun c ->
+                    match c with
+                    | SchemaNode.Ref id -> id
+                    | other -> failtestf "Expected Ref in AnyOf, got %A" other)
+                Expect.equal (Set.ofList caseRefs) (Set.ofList ["Leaf"; "Branch"]) "Case references"
+            | other -> failtestf "Expected AnyOf at root, got %A" other
+        }
     ]
 
 [<Tests>]

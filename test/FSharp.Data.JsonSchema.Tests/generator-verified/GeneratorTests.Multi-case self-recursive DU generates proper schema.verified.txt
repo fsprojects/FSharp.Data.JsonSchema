@@ -1,0 +1,91 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Expression",
+  "definitions": {
+    "Literal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Literal",
+          "x-enumNames": [
+            "Literal"
+          ],
+          "enum": [
+            "Literal"
+          ]
+        },
+        "item": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Add": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item1",
+        "item2"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Add",
+          "x-enumNames": [
+            "Add"
+          ],
+          "enum": [
+            "Add"
+          ]
+        },
+        "item1": {
+          "$ref": "#"
+        },
+        "item2": {
+          "$ref": "#"
+        }
+      }
+    },
+    "Negate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "item"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "default": "Negate",
+          "x-enumNames": [
+            "Negate"
+          ],
+          "enum": [
+            "Negate"
+          ]
+        },
+        "item": {
+          "$ref": "#"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions/Literal"
+    },
+    {
+      "$ref": "#/definitions/Add"
+    },
+    {
+      "$ref": "#/definitions/Negate"
+    }
+  ]
+}

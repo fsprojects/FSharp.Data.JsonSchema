@@ -353,4 +353,24 @@ let duEncodingTests =
             let gen = Generator.Create(unionEncoding = FSharp.Data.JsonSchema.Core.UnionEncodingStyle.Untagged)
             return gen typeof<TestDUForEncoding> |> json
         }
+
+        verify "Self-recursive DU generates proper schema" {
+            let gen = Generator.CreateMemoized("tag")
+            return gen typeof<TreeNode> |> json
+        }
+
+        verify "Self-recursive record generates proper schema" {
+            let gen = Generator.CreateMemoized("tag")
+            return gen typeof<LinkedNode> |> json
+        }
+
+        verify "Recursion through collection generates proper schema" {
+            let gen = Generator.CreateMemoized("tag")
+            return gen typeof<TreeRecord> |> json
+        }
+
+        verify "Multi-case self-recursive DU generates proper schema" {
+            let gen = Generator.CreateMemoized("tag")
+            return gen typeof<Expression> |> json
+        }
     ]
