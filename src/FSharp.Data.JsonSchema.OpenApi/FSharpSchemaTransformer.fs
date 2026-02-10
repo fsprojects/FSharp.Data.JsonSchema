@@ -35,21 +35,40 @@ type FSharpSchemaTransformer(config: SchemaGeneratorConfig) =
         target.AdditionalProperties <- source.AdditionalProperties
         target.Discriminator <- source.Discriminator
         target.Default <- source.Default
+
+        // On .NET 10, OpenApiSchema collections may be null by default
+        if isNull target.Properties then
+            target.Properties <- System.Collections.Generic.Dictionary<_,_>()
         target.Properties.Clear()
         for kv in source.Properties do
             target.Properties.[kv.Key] <- kv.Value
+
+        if isNull target.Required then
+            target.Required <- System.Collections.Generic.HashSet<_>()
         target.Required.Clear()
         for req in source.Required do
             target.Required.Add(req) |> ignore
+
+        if isNull target.AnyOf then
+            target.AnyOf <- System.Collections.Generic.List<_>()
         target.AnyOf.Clear()
         for s in source.AnyOf do
             target.AnyOf.Add(s)
+
+        if isNull target.OneOf then
+            target.OneOf <- System.Collections.Generic.List<_>()
         target.OneOf.Clear()
         for s in source.OneOf do
             target.OneOf.Add(s)
+
+        if isNull target.AllOf then
+            target.AllOf <- System.Collections.Generic.List<_>()
         target.AllOf.Clear()
         for s in source.AllOf do
             target.AllOf.Add(s)
+
+        if isNull target.Enum then
+            target.Enum <- System.Collections.Generic.List<_>()
         target.Enum.Clear()
         for e in source.Enum do
             target.Enum.Add(e)
