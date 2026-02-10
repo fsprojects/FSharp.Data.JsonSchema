@@ -1,3 +1,16 @@
+### FSharp.Data.JsonSchema.NJsonSchema 3.0.1
+
+* Fix recursive type serialization for self-referential types with nullable fields
+* Fix NJsonSchemaTranslator to properly handle Ref("#") in nullable contexts
+
+### FSharp.Data.JsonSchema.Core 3.0.1
+
+* No changes (version bump for consistency)
+
+### FSharp.Data.JsonSchema.OpenApi 3.0.1
+
+* No changes (version bump for consistency)
+
 ### FSharp.Data.JsonSchema.NJsonSchema 3.0.0
 
 * **New Package**: Renamed from FSharp.Data.JsonSchema (this is now the go-forward package name)
