@@ -1,10 +1,5 @@
 namespace FSharp.Data.JsonSchema
 
-// The Obsolete processor types below implement ISchemaProcessor.Process by calling their own
-// (also Obsolete) instance member. Kept for source back-compat; suppress the resulting FS0044
-// self-reference warning rather than the noise of duplicating each member's body.
-#nowarn "44"
-
 open System
 open System.Collections.Generic
 open Microsoft.FSharp.Reflection
@@ -87,7 +82,10 @@ type OptionSchemaProcessor() =
             schema.Type <- schemaType
 
     interface ISchemaProcessor with
+        // FS0044: delegates to the type's own (also Obsolete) Process member.
+#nowarn "44"
         member this.Process(context) = this.Process(context)
+#warnon "44"
 
 [<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type SingleCaseDuSchemaProcessor() =
@@ -107,7 +105,10 @@ type SingleCaseDuSchemaProcessor() =
                 schema.EnumerationNames.Add(case.Name)
 
     interface ISchemaProcessor with
+        // FS0044: delegates to the type's own (also Obsolete) Process member.
+#nowarn "44"
         member this.Process(context) = this.Process(context)
+#warnon "44"
 
 [<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
 type MultiCaseDuSchemaProcessor(?casePropertyName) =
@@ -205,15 +206,21 @@ type MultiCaseDuSchemaProcessor(?casePropertyName) =
                                 s.RequiredProperties.Add(camelCaseFieldName)
                         s
 
-                // Attach each case definition.
+                // Attach each case definition. FS0044: Dictionary is Obsolete but still the
+                // internal helper this Obsolete processor type relies on.
+#nowarn "44"
                 let name = Dictionary.getUniqueKey schema.Definitions case.Name
+#warnon "44"
                 // printfn "Adding case %s to dict: %A" name schema.Definitions
                 schema.Definitions.Add(name, caseSchema)
                 // Add each schema to the anyOf collection.
                 schema.AnyOf.Add(JsonSchema(Reference = caseSchema))
 
     interface ISchemaProcessor with
+        // FS0044: delegates to the type's own (also Obsolete) Process member.
+#nowarn "44"
         member this.Process(context) = this.Process(context)
+#warnon "44"
 
 
 [<Obsolete("No longer used internally. Use FSharp.Data.JsonSchema.Core.SchemaAnalyzer instead.")>]
@@ -235,7 +242,10 @@ type RecordSchemaProcessor() =
                     property.IsRequired <- true
 
     interface ISchemaProcessor with
+        // FS0044: delegates to the type's own (also Obsolete) Process member.
+#nowarn "44"
         member this.Process(context) = this.Process(context)
+#warnon "44"
 
 
 
