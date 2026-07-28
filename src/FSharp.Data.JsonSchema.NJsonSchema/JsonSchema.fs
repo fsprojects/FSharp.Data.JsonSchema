@@ -1,5 +1,10 @@
 namespace FSharp.Data.JsonSchema
 
+// The Obsolete processor types below implement ISchemaProcessor.Process by calling their own
+// (also Obsolete) instance member. Kept for source back-compat; suppress the resulting FS0044
+// self-reference warning rather than the noise of duplicating each member's body.
+#nowarn "44"
+
 open System
 open System.Collections.Generic
 open Microsoft.FSharp.Reflection
@@ -332,8 +337,8 @@ type Generator private () =
                                     | :? System.ComponentModel.DataAnnotations.MaxLengthAttribute as ml ->
                                         prop.MaxLength <- Nullable ml.Length
                                     | :? System.ComponentModel.DataAnnotations.RangeAttribute as r ->
-                                        prop.Minimum <- Nullable (Convert.ToDecimal(r.Minimum :> obj))
-                                        prop.Maximum <- Nullable (Convert.ToDecimal(r.Maximum :> obj))
+                                        prop.Minimum <- Nullable (Convert.ToDecimal r.Minimum)
+                                        prop.Maximum <- Nullable (Convert.ToDecimal r.Maximum)
                                     | _ -> ()
                             | _ -> ()
                 applyAnnotations ty schema

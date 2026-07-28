@@ -17,9 +17,9 @@
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Expecto" Version="9.0.2" />
+    <PackageReference Include="Expecto" Version="9.0.4" />
     <PackageReference Include="GitHubActionsTestLogger" Version="1.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Verify.ClipboardAccept" Version="20.3.2" />
     <PackageReference Include="Verify.DiffPlex" Version="2.2.1" />
     <PackageReference Include="Verify.Expecto" Version="20.3.2" />

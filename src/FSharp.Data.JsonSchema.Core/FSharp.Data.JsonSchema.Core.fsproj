@@ -16,4 +16,14 @@
     <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23" />
   </ItemGroup>
 
+  <!-- Explicit floors above FSharp.SystemTextJson's transitive default (System.Text.Json 6.0.0),
+       which is affected by GHSA-8g4q-xg66-9fp4 (denial of service in JsonSerializer). 8.0.6 drops
+       netcoreapp3.1 support, so that TFM pins to the 6.x line's patched release instead. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="System.Text.Json" Version="6.0.10" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.1'">
+    <PackageReference Include="System.Text.Json" Version="8.0.6" />
+  </ItemGroup>
+
 </Project>
