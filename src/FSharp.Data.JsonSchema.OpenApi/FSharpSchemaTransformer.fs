@@ -80,7 +80,7 @@ type FSharpSchemaTransformer(config: SchemaGeneratorConfig) =
         member _.TransformAsync(schema, context, _cancellationToken) =
             let ty = context.JsonTypeInfo.Type
             if isFSharpType ty then
-                let doc = SchemaAnalyzer.analyze config ty
+                let doc = SchemaAnalyzer.analyze config ty |> OpenApiSchemaTranslator.inlineFormatOnlyDefinitions
 #if NET10_0_OR_GREATER
                 let rootTypeId = config.TypeIdResolver ty
                 let (translatedRoot, _componentSchemas) =

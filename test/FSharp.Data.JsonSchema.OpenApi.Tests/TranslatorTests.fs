@@ -224,6 +224,69 @@ let definitionsTests =
         }
     ]
 
+[<Tests>]
+let inlineFormatOnlyDefinitionsTests =
+    testList "translator/inlineFormatOnlyDefinitions" [
+        test "a Ref to a bare Primitive definition is inlined and the definition dropped" {
+            let doc = {
+                Root =
+                    SchemaNode.Object {
+                        Properties = [ { Name = "date"; Schema = SchemaNode.Ref "DateTime"; Description = None } ]
+                        Required = [ "date" ]
+                        AdditionalProperties = false
+                        TypeId = None
+                        Description = None
+                        Title = None
+                    }
+                Definitions = [ "DateTime", SchemaNode.Primitive(PrimitiveType.String, Some "date-time") ]
+            }
+            let inlined = OpenApiSchemaTranslator.inlineFormatOnlyDefinitions doc
+            Expect.isEmpty inlined.Definitions "no definitions remain"
+            match inlined.Root with
+            | SchemaNode.Object obj ->
+                match obj.Properties.[0].Schema with
+                | SchemaNode.Primitive(PrimitiveType.String, Some "date-time") -> ()
+                | other -> failtestf "expected inlined Primitive, got %A" other
+            | other -> failtestf "expected Object root, got %A" other
+        }
+
+        test "a Ref to a non-Primitive definition (e.g. a record) is left as a Ref" {
+            let doc = {
+                Root = SchemaNode.Ref "Widget"
+                Definitions = [
+                    "Widget",
+                    SchemaNode.Object {
+                        Properties = []
+                        Required = []
+                        AdditionalProperties = false
+                        TypeId = None
+                        Description = None
+                        Title = None
+                    }
+                ]
+            }
+            let inlined = OpenApiSchemaTranslator.inlineFormatOnlyDefinitions doc
+            Expect.equal inlined.Definitions doc.Definitions "definition preserved"
+            Expect.equal inlined.Root doc.Root "root Ref preserved"
+        }
+
+        test "translating an inlined document produces no dangling component" {
+            let doc = {
+                Root = SchemaNode.Object {
+                    Properties = [ { Name = "id"; Schema = SchemaNode.Ref "Guid"; Description = None } ]
+                    Required = [ "id" ]
+                    AdditionalProperties = false
+                    TypeId = None
+                    Description = None
+                    Title = None
+                }
+                Definitions = [ "Guid", SchemaNode.Primitive(PrimitiveType.String, Some "guid") ]
+            }
+            let (_, components) = translate (OpenApiSchemaTranslator.inlineFormatOnlyDefinitions doc)
+            Expect.isTrue components.IsEmpty "no component schema registered for the inlined primitive"
+        }
+    ]
+
 #if NET10_0_OR_GREATER
 [<Tests>]
 let documentBindingTests =

@@ -79,9 +79,47 @@ let private hasSchema (root: JsonElement) (name: string) : bool =
         | false, _ -> false
         | true, schemas -> schemas.TryGetProperty name |> fst
 
+/// Matches the exact repro from GitHub issue #29.
+type WeatherForecast =
+    { Date: System.DateTime
+      TemperatureC: int
+      shape: Shape
+      Summary: string option }
+
 [<Tests>]
 let endToEndTests =
     testList "endToEnd" [
+        test "OpenAPI document generation inlines DateTime fields instead of a dangling $ref" {
+            let app =
+                startApp (fun app ->
+                    app.MapGet(
+                        "/weather",
+                        System.Func<WeatherForecast>(fun () ->
+                            { Date = System.DateTime.Now; TemperatureC = 1; shape = Point; Summary = None })
+                    )
+                    |> ignore
+                )
+            try
+                let (status, body) = getOpenApiDocument app
+                Expect.equal status System.Net.HttpStatusCode.OK "200 OK"
+                use jsonDoc = JsonDocument.Parse body
+                let root = jsonDoc.RootElement
+#if NET10_0_OR_GREATER
+                Expect.isFalse (hasSchema root "WeatherForecast.DateTime") "DateTime must not be registered as its own component"
+#endif
+                let dateSchema =
+                    root
+                        .GetProperty("components")
+                        .GetProperty("schemas")
+                        .GetProperty("WeatherForecast")
+                        .GetProperty("properties")
+                        .GetProperty("date")
+                Expect.equal (dateSchema.GetProperty("type").GetString()) "string" "date field inlines as a string"
+                Expect.equal (dateSchema.GetProperty("format").GetString()) "date-time" "date field keeps the date-time format"
+                Expect.isFalse (dateSchema.TryGetProperty("$ref") |> fst) "date field must not be a $ref"
+            finally
+                stopApp app
+        }
         test "OpenAPI document generation succeeds for a discriminated union response" {
             let app = startApp (fun app -> app.MapGet("/shape", System.Func<Shape>(fun () -> Point)) |> ignore)
             try

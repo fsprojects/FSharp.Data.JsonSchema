@@ -105,6 +105,50 @@ module OpenApiSchemaTranslator =
         schema
 #endif
 
+    // ── Format-only definition inlining ──
+
+    let rec private inlineNode (inlineable: Map<string, SchemaNode>) (node: SchemaNode) : SchemaNode =
+        match node with
+        | SchemaNode.Ref typeId ->
+            match Map.tryFind typeId inlineable with
+            | Some prim -> prim
+            | None -> node
+        | SchemaNode.Object obj ->
+            SchemaNode.Object
+                { obj with
+                    Properties = obj.Properties |> List.map (fun p -> { p with Schema = inlineNode inlineable p.Schema }) }
+        | SchemaNode.Array items -> SchemaNode.Array(inlineNode inlineable items)
+        | SchemaNode.AnyOf schemas -> SchemaNode.AnyOf(schemas |> List.map (inlineNode inlineable))
+        | SchemaNode.OneOf(schemas, discriminator) -> SchemaNode.OneOf(schemas |> List.map (inlineNode inlineable), discriminator)
+        | SchemaNode.Nullable inner -> SchemaNode.Nullable(inlineNode inlineable inner)
+        | SchemaNode.Map valueSchema -> SchemaNode.Map(inlineNode inlineable valueSchema)
+        | SchemaNode.Primitive _
+        | SchemaNode.Enum _
+        | SchemaNode.Const _
+        | SchemaNode.Any -> node
+
+    /// A definition that's just a bare format-annotated primitive (as produced for
+    /// DateTime, Guid, Uri, TimeSpan, etc.) doesn't need its own component schema —
+    /// a $ref to it is a needless indirection that shows up as an extra, oddly-named
+    /// component in the OpenAPI document (see #29). Inline every reference to such a
+    /// definition directly and drop the now-unreferenced definition.
+    let inlineFormatOnlyDefinitions (doc: SchemaDocument) : SchemaDocument =
+        let inlineable =
+            doc.Definitions
+            |> List.choose (fun (key, value) ->
+                match value with
+                | SchemaNode.Primitive _ -> Some(key, value)
+                | _ -> None)
+            |> Map.ofList
+        if Map.isEmpty inlineable then
+            doc
+        else
+            { Root = inlineNode inlineable doc.Root
+              Definitions =
+                doc.Definitions
+                |> List.filter (fun (key, _) -> not (Map.containsKey key inlineable))
+                |> List.map (fun (key, value) -> key, inlineNode inlineable value) }
+
     // ── Core translation ──
 
     /// Shared translation implementation. `rootTypeId` names the component a self-ref
